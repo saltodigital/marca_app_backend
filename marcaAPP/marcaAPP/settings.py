@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth'
+    'rest_auth',
+    'parametrizacion'
 ]
 
 MIDDLEWARE = [
@@ -116,6 +117,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+from django.db import models
+AUTH_USER_MODEL = 'parametrizacion.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
