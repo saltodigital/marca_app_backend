@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User
 from marcaAPP.resource import MessageNC, ResponseNC
-from parametrizacion.serializers import UserSerializer, GroupSerializer, PaisSerializer, RegionSerializer, MunicipioSerializer, EmpresaSerializer
+from parametrizacion.serializers import UserSerializer, GroupSerializer, PaisSerializer, RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -294,3 +294,58 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             return Response({ResponseNC.message:'Se presentaron errores al procesar la solicitud','success':'error',
             ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 #Fin api rest para municipio
+
+class CargoViewSet(viewsets.ModelViewSet):
+    """
+    Retorna una lista de Cargos, puede utilizar el parametro (dato) a traver del cual, se podra buscar por todo o parte del nombre, tambien puede buscar por medio de la empresa de cual pertenece dicho cargo.
+    """
+    model= Cargo
+	#model_log=Logs
+	#model_acciones=Acciones
+    nombre_modulo='parametrizacion.cargo'
+    queryset = model.objects.all()
+    serializer_class = CargoSerializer
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','status':'success','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            paginacion = self.request.query_params.get('sin_paginacion', None)
+
+            queryset = super(CargoViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            empresa_filtro=self.request.query_params.get('empresa_filtro', None)
+            if empresa_filtro:
+                empresa_id = empresa_filtro
+                qset=(Q(empresa_id=empresa_id))
+            else:
+                empresa_id = self.request.query_params.get('empresa_id', request.user.usuario.empresa.id)
+                qset=(Q(empresa=empresa_id))
+
+            if dato:
+                qset = qset & (Q(nombre__icontains=dato))
+
+            queryset = self.model.objects.filter(qset)
+
+            if paginacion==None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({'message':'','success':'ok',
+                    'data':serializer.data})
+
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
+            else:
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#Fin Api rest para Cargo

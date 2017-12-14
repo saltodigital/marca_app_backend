@@ -40,3 +40,11 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Empresa
         fields=('url','id','nombre','rut','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id' )
+
+#Api rest para Cargo
+class CargoSerializer(serializers.HyperlinkedModelSerializer):
+	empresa = EmpresaSerializer(read_only=True)
+
+	class Meta:
+		model = Cargo
+		fields=('id','nombre','empresa','nivel')
