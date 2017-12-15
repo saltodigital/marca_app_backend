@@ -25,6 +25,7 @@ router.register(r'pais', views.PaisViewSet)
 router.register(r'region', views.RegionViewSet)
 router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'cargos', views.CargoViewSet)
+router.register(r'empresa', views.EmpresaViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

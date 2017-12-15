@@ -2,11 +2,18 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
+        fields = ('url', 'first_name', 'last_name', 'email', 'mobile', 'password','groups')
 
+    def create(self, validated_data):
+        user = super(UserSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
