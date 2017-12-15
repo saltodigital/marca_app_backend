@@ -77,12 +77,48 @@ WSGI_APPLICATION = 'marcaAPP.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
+LANGUAGE_CODE = 'es-co'
+
+TIME_ZONE = 'America/Bogota'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = False
+
+
+from django.utils.translation import ugettext_lazy as _
+LANGUAGES = (
+    ('en', _('English')),
+    ('es-co', _('Spanish')),
+)
+
+# Definimos la ruta de los archivos de idiomas
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Allow all host headers
+ALLOWED_HOSTS = ['*']
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
+}""" 
+
+# Update database configuration with $DATABASE_URL.
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES = { 'default': dj_database_url.config() }
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -103,19 +139,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/2.0/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
 
 from django.db import models
 AUTH_USER_MODEL = 'parametrizacion.User'
@@ -160,3 +183,24 @@ SWAGGER_SETTINGS = {
     'LOGIN_URL': 'login',
     'LOGOUT_URL': 'logout',
 }
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+

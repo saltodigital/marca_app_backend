@@ -98,3 +98,5 @@ myvenv/
 
 # mypy
 .mypy_cache/
+.vscode/settings.json
+*.sqlite3
