@@ -421,7 +421,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     'data':''},status=status.HTTP_400_BAD_REQUEST)
                 
                 if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(municipio_id=request.DATA['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)

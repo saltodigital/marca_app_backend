@@ -5,8 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 #Modelos generales.
-class BaseModel(models.Model):
-    nombre = models.CharField(max_length=250)
+class BasePermisoModel(models.Model):
     created_on = models.DateTimeField(auto_now_add = True)
     modified_on = models.DateTimeField(auto_now = True)
 
@@ -17,6 +16,9 @@ class BaseModel(models.Model):
             ("can_see_owner", "Solo los que creo"),
         )
 
+class BaseModel(BasePermisoModel):
+    nombre = models.CharField(max_length=250)
+    
     def __str__(self):
         return self.nombre
 
@@ -29,7 +31,7 @@ class Region(BaseModel):
 class Municipio(BaseModel):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
 
-class Persona(BaseModel):
+class Persona(BasePermisoModel):
     generos = (
         (u'0',u'[Seleccione...]'),
         (u'1',u'Masculino'),
@@ -69,7 +71,19 @@ class User(AbstractUser):
     class Meta:
         db_table = 'auth_user'
 
+class ContactoEmpresa(BasePermisoModel):
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
+class Proyecto(BaseModel):
+    municipio = models.ForeignKey(Municipio , related_name = 'f_Municipio_parametrizacion' , on_delete=models.PROTECT)
+	#estado_proyecto = models.ForeignKey(Estado , related_name = 'f_Estado_proyecto_estado' , on_delete=models.PROTECT )
+    valor_adjudicado = models.FloatField()
+	tipo_proyecto = models.ForeignKey(P_tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
+	fecha_inicio = 	models.DateField(null = True , blank = True) 	
+	fecha_fin = models.DateField(null = True , blank = True)
+	funcionario  = models.ManyToManyField(User, related_name='fk_proyecto_funcionario' , null = True )#responsables del proyecto
 
-
+	class Meta:
+		unique_together = (("nombre" , "municipio"),)
 

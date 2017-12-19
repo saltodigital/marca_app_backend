@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User
+from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User, ContactoEmpresa
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -55,3 +55,19 @@ class CargoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Cargo
 		fields=('id','nombre','empresa','nivel')
+
+class PersonaSerializer(serializers.HyperlinkedModelSerializer):
+    municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
+    municipio = MunicipioSerializer(read_only=True)
+    class Meta:
+        model = Empresa
+        fields=('url','id','primerApellido','segundoApellido','rut','genero','estadoCivil','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id' )
+
+class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
+    
+	persona=UsuarioSerializer(read_only=True)
+	persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Usuario.objects.all())
+
+	class Meta:
+		model = ContactoEmpresa
+		fields=('id','persona','persona_id')
