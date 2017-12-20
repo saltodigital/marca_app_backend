@@ -18,7 +18,7 @@ from django.conf.urls import url,include
 from rest_framework import routers
 from parametrizacion import views
 from rest_framework_swagger.views import get_swagger_view
-from rest_framework.renderers import SwaggerUIRenderer, OpenAPIRenderer
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
