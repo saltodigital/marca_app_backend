@@ -30,7 +30,7 @@ class RegionSerializer(serializers.HyperlinkedModelSerializer):
     pais = PaisSerializer(read_only=True)
     class Meta:
         model = Region
-    fields=('id','nombre','pais','pais_id')
+        fields=('id','nombre','pais','pais_id')
 
 class MunicipioSerializer(serializers.HyperlinkedModelSerializer):
     
