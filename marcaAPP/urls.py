@@ -18,6 +18,7 @@ from django.conf.urls import url,include
 from rest_framework import routers
 from parametrizacion import views
 from rest_framework_swagger.views import get_swagger_view
+from rest_framework.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -28,11 +29,11 @@ router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'cargos', views.CargoViewSet)
 router.register(r'empresa', views.EmpresaViewSet)
 
-schema_view = get_swagger_view(title='Pastebin API')
+schema_view = get_swagger_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
 urlpatterns = [
+    url(r'^', schema_view, name="docs"),
     url(r'^admin/', admin.site.urls),
-    url(r'^docs/', schema_view),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^rest-auth/', include('rest_auth.urls'))
