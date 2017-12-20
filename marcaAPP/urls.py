@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.conf.urls import url,include
 from rest_framework import routers
 from parametrizacion import views
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
 router = routers.DefaultRouter()
@@ -29,7 +29,7 @@ router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'cargos', views.CargoViewSet)
 router.register(r'empresa', views.EmpresaViewSet)
 
-schema_view = get_swagger_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
+schema_view = get_schema_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
 urlpatterns = [
     url(r'^', schema_view, name="docs"),
