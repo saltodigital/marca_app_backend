@@ -397,7 +397,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
             page = self.paginate_queryset(queryset)
 
-            if sin_paginacion is None:
+            if sin_paginacion is None: 
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
                 return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})

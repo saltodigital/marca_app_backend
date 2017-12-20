@@ -16,8 +16,17 @@ class BasePermisoModel(models.Model):
             ("can_see_owner", "Solo los que creo"),
         )
 
-class BaseModel(BasePermisoModel):
+class BaseModel(models.Model):
     nombre = models.CharField(max_length=250)
+    created_on = models.DateTimeField(auto_now_add = True)
+    modified_on = models.DateTimeField(auto_now = True)
+
+    class Meta:
+        abstract = True
+        permissions = (
+            ("can_see_all", "Ver todos"),
+            ("can_see_owner", "Solo los que creo"),
+        )
     
     def __str__(self):
         return self.nombre
@@ -31,7 +40,7 @@ class Region(BaseModel):
 class Municipio(BaseModel):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
 
-class Persona(BasePermisoModel):
+class Persona(BaseModel):
     generos = (
         (u'0',u'[Seleccione...]'),
         (u'1',u'Masculino'),
@@ -77,13 +86,14 @@ class ContactoEmpresa(BasePermisoModel):
 
 class Proyecto(BaseModel):
     municipio = models.ForeignKey(Municipio , related_name = 'f_Municipio_parametrizacion' , on_delete=models.PROTECT)
+    descripcion = models.CharField(max_length=255,null = True , blank = True)
 	#estado_proyecto = models.ForeignKey(Estado , related_name = 'f_Estado_proyecto_estado' , on_delete=models.PROTECT )
     valor_adjudicado = models.FloatField()
-	tipo_proyecto = models.ForeignKey(P_tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
-	fecha_inicio = 	models.DateField(null = True , blank = True) 	
-	fecha_fin = models.DateField(null = True , blank = True)
-	funcionario  = models.ManyToManyField(User, related_name='fk_proyecto_funcionario' , null = True )#responsables del proyecto
+	#tipo_proyecto = models.ForeignKey(P_tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
+    fecha_inicio = 	models.DateField(null = True , blank = True)
+    fecha_fin = models.DateField(null = True , blank = True)
+    #funcionario  = models.ManyToManyField(User, related_name='fk_proyecto_funcionario' , null = True , blank = True)#responsables del proyecto
 
-	class Meta:
-		unique_together = (("nombre" , "municipio"),)
+    class Meta:
+        unique_together = (("nombre" , "municipio"),)
 
