@@ -32,7 +32,7 @@ router.register(r'empresa', views.EmpresaViewSet)
 schema_view = get_schema_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
 urlpatterns = [
-    url(r'^', schema_view, name="docs"),
+    url(r'^docs', schema_view, name="docs"),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
