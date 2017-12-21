@@ -27,14 +27,15 @@ router.register(r'pais', views.PaisViewSet)
 router.register(r'regiones', views.RegionViewSet)
 router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'cargos', views.CargoViewSet)
-router.register(r'empresa', views.EmpresaViewSet)
+router.register(r'empresas', views.EmpresaViewSet)
+router.register(r'estados', views.EstadoViewSet)
 
 schema_view = get_schema_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
 urlpatterns = [
-    url(r'^docs', schema_view, name="docs"),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^rest-auth/', include('rest_auth.urls'))
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^docs', schema_view, name="docs"),
+    url(r'^api/', include(router.urls)), 
 ]
