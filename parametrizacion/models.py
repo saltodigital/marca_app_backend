@@ -89,11 +89,30 @@ class Proyecto(BaseModel):
     descripcion = models.CharField(max_length=255,null = True , blank = True)
 	#estado_proyecto = models.ForeignKey(Estado , related_name = 'f_Estado_proyecto_estado' , on_delete=models.PROTECT )
     valor_adjudicado = models.FloatField()
+    latitud = models.FloatField()
+    longitud = models.FloatField()
 	#tipo_proyecto = models.ForeignKey(P_tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
     fecha_inicio = 	models.DateField(null = True , blank = True)
     fecha_fin = models.DateField(null = True , blank = True)
-    #funcionario  = models.ManyToManyField(User, related_name='fk_proyecto_funcionario' , null = True , blank = True)#responsables del proyecto
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (("nombre" , "municipio"),)
+    
+class Estado(BaseModel):
+    app = models.CharField(max_length = 250)
+    color = models.CharField(max_length = 250 , blank= True)
+    icono = models.CharField(max_length = 250 , blank= True)
+    estado = models.BooleanField( default = 1 )
+    codigo = models.IntegerField(blank= True,null=True)
+    orden=models.IntegerField()
+
+    def __unicode__(self):
+        return self.app + '.' + self.nombre
+    class Meta:
+        unique_together = (("app" , "codigo" ),)
+
+    def ObtenerID(self,app,codigo):
+        return Estado.objects.get(app=app,codigo=codigo).id
 
