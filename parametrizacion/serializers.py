@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User, ContactoEmpresa, Persona
+from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
+User, ContactoEmpresa, Persona, Estado)
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -71,3 +72,9 @@ class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = ContactoEmpresa
 		fields=('id','persona','persona_id')
+
+class EstadoSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Estado
+        fields=('id', 'app', 'nombre', 'icono', 'color')
