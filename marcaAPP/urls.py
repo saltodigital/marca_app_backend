@@ -29,7 +29,7 @@ router.register(r'municipios', views.MunicipioViewSet)
 router.register(r'cargos', views.CargoViewSet)
 router.register(r'empresas', views.EmpresaViewSet)
 router.register(r'estados', views.EstadoViewSet)
-router.register(r'tipos', views.EstadoViewSet)
+router.register(r'tipos', views.TipoViewSet)
 
 schema_view = get_schema_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
