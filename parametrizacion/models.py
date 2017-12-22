@@ -116,3 +116,18 @@ class Estado(BaseModel):
     def ObtenerID(self,app,codigo):
         return Estado.objects.get(app=app,codigo=codigo).id
 
+class Tipo(BaseModel):
+    app = models.CharField(max_length = 250)
+    color = models.CharField(max_length = 250 , blank=True)
+    codigo = models.IntegerField(blank= True,null=True)
+    icono = models.CharField(max_length = 200 , blank=True)
+
+    def __unicode__(self):
+        return self.app + '.' + self.nombre
+    class Meta:
+        unique_together = (("app" , "codigo" ),)
+
+    def ObtenerID(self,app,codigo):
+        return Tipo.objects.get(app=app,codigo=codigo).id
+
+

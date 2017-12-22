@@ -10,9 +10,10 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User, Estado
+from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User, Estado, Tipo
 from marcaAPP.resource import MessageNC, ResponseNC
-from parametrizacion.serializers import UserSerializer, GroupSerializer, PaisSerializer, RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer
+from parametrizacion.serializers import (UserSerializer, GroupSerializer, PaisSerializer, TipoSerializer,
+RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -20,7 +21,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 @permission_classes((AllowAny,))
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint para usuarios creacion y edicion.
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
@@ -41,7 +42,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API muestra los grupos 
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -133,7 +134,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 
 class RegionViewSet(viewsets.ModelViewSet):
     """
-	Retorna una lista de Reggiones, puede utilizar el parametro (dato) a traver del cual, se podra buscar por todo o parte del nombre, tambien puede buscar las regiones que hacen parte de determinado pais.
+	Retorna una lista de Regiones, puede utilizar el parametro (dato) a traver del cual, se podra buscar por todo o parte del nombre, tambien puede buscar las regiones que hacen parte de determinado pais.
     """
     model=Region
     queryset = model.objects.all()
@@ -503,5 +504,52 @@ class EstadoViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+class TipoViewSet(viewsets.ModelViewSet):
+    """
+		Retorna una lista de tipos, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y aplicacion.<br/>
+		Igualmente puede utilizar los siguientes parametros:<br/><br/>
+		<b>{aplicacion=TEXTO}</b>: Retorna la lista de estados  con el nombre de la aplicacion del TEXTO escrito.<br/>
+		Es posible utilizar los parametros combinados, por ejemplo: buscar en la lista de estados aquellos que contentan determinado texto en su nombre o aplicacion.
+	"""
+    model=Tipo
+    queryset = model.objects.all()
+    serializer_class = TipoSerializer
+    parser_classes=(FormParser, MultiPartParser,)
+    paginate_by = 10
 
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(TipoViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            aplicacion= self.request.query_params.get('aplicacion',None)
+			
+            if (dato or aplicacion):
+                if dato:
+                    qset = (Q(nombre__icontains=dato) | Q(app__icontains=dato))
+                if aplicacion:
+                    qset = (Q(app__exact=aplicacion))
+
+                queryset = self.model.objects.filter(qset).order_by('orden')
+			#utilizar la variable ignorePagination para quitar la paginacion
+            ignorePagination= self.request.query_params.get('ignorePagination',None)
+            if ignorePagination is None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            serializer = self.get_serializer(queryset,many=True)
+            return Response({'message':'','success':'ok','data':serializer.data})			
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
