@@ -61,7 +61,7 @@ class PersonaSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
     municipio = MunicipioSerializer(read_only=True)
     class Meta:
-        model = Empresa
+        model = Persona
         fields=('url','id','primerApellido','segundoApellido','rut','genero','estadoCivil','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id' )
 
 class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
