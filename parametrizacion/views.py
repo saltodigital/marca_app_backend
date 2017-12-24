@@ -10,10 +10,11 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User, Estado, Tipo
+from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, User, 
+Estado, Tipo, Persona, Proyecto)
 from marcaAPP.resource import MessageNC, ResponseNC
 from parametrizacion.serializers import (UserSerializer, GroupSerializer, PaisSerializer, TipoSerializer,
-RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer)
+RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer, PersonaSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -25,6 +26,15 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    model=User
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
@@ -551,5 +561,95 @@ class TipoViewSet(viewsets.ModelViewSet):
             return Response({'message':'','success':'ok','data':serializer.data})			
         except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PersonaViewSet(viewsets.ModelViewSet):
+    """
+	Retorna una lista de personas, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y rut.<br/>
+    """
+    model=Persona
+    queryset = model.objects.all()
+    serializer_class = PersonaSerializer
+    paginate_by = 25
+    nombre_modulo=''
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(PersonaViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+
+            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
+
+            if (dato):
+                qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
+            
+            queryset = self.model.objects.filter(qset)
+
+            page = self.paginate_queryset(queryset)
+
+            if sin_paginacion is None: 
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            else:
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})	
+        
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def create(self, request, *args, **kwargs):
+
+        if request.method == 'POST':				
+            try:
+                serializer = PersonaSerializer(data=request.DATA,context={'request': request})
+                persona = Persona.objects.filter(rut=request.DATA['rut'])
+
+                if persona:
+                    return Response({'message':'Ya existe una persona registrada con el rut digitado','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+                
+                if serializer.is_valid():
+                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self,request,*args,**kwargs):
+    
+        if request.method == 'PUT':
+            try:
+                partial = kwargs.pop('partial', False)
+                instance = self.get_object()
+                serializer = PersonaSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+				
+                if serializer.is_valid():
+                    valores=Persona.objects.get(id=instance.id)
+                    serializer.save()
+                    return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self,request,*args,**kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
     
 

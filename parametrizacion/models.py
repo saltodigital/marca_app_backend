@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 
 #Modelos generales.
 class BasePermisoModel(models.Model):
@@ -46,7 +48,13 @@ class Persona(BaseModel):
         (u'1',u'Masculino'),
         (u'2',u'Femenino')
     )
-    rut = models.CharField(max_length=50, unique=True)
+    rut = models.CharField(max_length=50, unique=True,validators=[
+        RegexValidator(
+            regex='[0-9]{10}[0-9]',
+            message='Rut no valido',
+            code='invalid_rut'
+        ),
+    ])
     primerApellido = models.CharField(max_length=100)
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
@@ -61,7 +69,13 @@ class Persona(BaseModel):
         return self.nombre + ' ' + self.primerApellido
 
 class Empresa(BaseModel):
-    rut = models.CharField(max_length=50, unique=True)
+    rut = models.CharField(max_length=50, unique=True,validators=[
+        RegexValidator(
+            regex='[0-9]{10}[0-9]',
+            message='Rut no valido',
+            code='invalid_rut'
+        ),
+    ])
     field = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=255)
     correoElectronico = models.EmailField(max_length=200)
@@ -94,7 +108,6 @@ class Proyecto(BaseModel):
 	#tipo_proyecto = models.ForeignKey(P_tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
     fecha_inicio = 	models.DateField(null = True , blank = True)
     fecha_fin = models.DateField(null = True , blank = True)
-    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
     class Meta:
