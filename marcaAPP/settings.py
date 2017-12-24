@@ -123,6 +123,7 @@ DATABASES = {
 }
 '''
 
+
 # Update database configuration with $DATABASE_URL.
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
@@ -151,6 +152,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 from django.db import models
 AUTH_USER_MODEL = 'parametrizacion.User'
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': 'rest-auth/login',
+    'LOGOUT_URL': 'rest-auth/logout',
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -188,10 +194,6 @@ REST_FRAMEWORK = {
     )
 }
 
-SWAGGER_SETTINGS = {
-    'LOGIN_URL': 'login',
-    'LOGOUT_URL': 'logout',
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
