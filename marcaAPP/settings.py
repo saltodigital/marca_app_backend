@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'rest_framework_swagger',
-    'parametrizacion'
 ]
 
 MIDDLEWARE = [
@@ -149,10 +148,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+'''
 from django.db import models
 AUTH_USER_MODEL = 'parametrizacion.User'
-
+'''
 SWAGGER_SETTINGS = {
     'LOGIN_URL': 'rest-auth/login',
     'LOGOUT_URL': 'rest-auth/logout',
