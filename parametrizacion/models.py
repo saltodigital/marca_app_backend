@@ -131,17 +131,17 @@ class Tipo(BaseModel):
 class Proyecto(BaseModel):
     municipio = models.ForeignKey(Municipio , related_name = 'f_Municipio_parametrizacion' , on_delete=models.PROTECT)
     descripcion = models.CharField(max_length=255,null = True , blank = True)
-	estadoProyecto = models.ForeignKey(Estado , related_name = 'f_Estado_proyecto_estado' , on_delete=models.PROTECT )
-    valor_adjudicado = models.FloatField()
+    estado = models.ForeignKey(Estado , related_name = 'f_Estado_proyecto_estado' , on_delete=models.PROTECT )
+    valorAdjudicado = models.FloatField()
     latitud = models.FloatField()
     longitud = models.FloatField()
-	tipoProyecto = models.ForeignKey(Tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
-    fecha_inicio = 	models.DateField(null = True , blank = True)
-    fecha_fin = models.DateField(null = True , blank = True)
+    tipo = models.ForeignKey(Tipo , related_name = 'f_P_tipo_proyecto' , on_delete=models.PROTECT)
+    fechaInicio = 	models.DateField(null = True , blank = True)
+    fechaFin = models.DateField(null = True , blank = True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-
+    
     class Meta:
-        unique_together = (("nombre" , "municipio"),)
+        unique_together = (("nombre" , "empresa"),)
     
 
 
