@@ -10,19 +10,32 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User
+from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, User, 
+Estado, Tipo, Persona, Proyecto)
 from marcaAPP.resource import MessageNC, ResponseNC
-from parametrizacion.serializers import UserSerializer, GroupSerializer, PaisSerializer, RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer
+from parametrizacion.serializers import (UserSerializer, GroupSerializer, PaisSerializer, TipoSerializer,
+RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer, PersonaSerializer,
+ProyectoSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
 
 @permission_classes((AllowAny,))
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint para usuarios creacion y edicion.
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    model=User
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
@@ -40,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API muestra los grupos 
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -132,7 +145,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 
 class RegionViewSet(viewsets.ModelViewSet):
     """
-	Retorna una lista de Reggiones, puede utilizar el parametro (dato) a traver del cual, se podra buscar por todo o parte del nombre, tambien puede buscar las regiones que hacen parte de determinado pais.
+	Retorna una lista de Regiones, puede utilizar el parametro (dato) a traver del cual, se podra buscar por todo o parte del nombre, tambien puede buscar las regiones que hacen parte de determinado pais.
     """
     model=Region
     queryset = model.objects.all()
@@ -397,7 +410,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
             page = self.paginate_queryset(queryset)
 
-            if sin_paginacion is None:
+            if sin_paginacion is None: 
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
                 return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
@@ -421,7 +434,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     'data':''},status=status.HTTP_400_BAD_REQUEST)
                 
                 if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(municipio_id=request.DATA['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -453,4 +466,275 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
+class EstadoViewSet(viewsets.ModelViewSet):
+    """
+		Retorna una lista de estados, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y aplicacion.<br/>
+		Igualmente puede utilizar los siguientes parametros:<br/><br/>
+		<b>{aplicacion=TEXTO}</b>: Retorna la lista de estados  con el nombre de la aplicacion del TEXTO escrito.<br/>
+		Es posible utilizar los parametros combinados, por ejemplo: buscar en la lista de estados aquellos que contentan determinado texto en su nombre o aplicacion.
+	"""
+    model=Estado
+    queryset = model.objects.all()
+    serializer_class = EstadoSerializer
+    parser_classes=(FormParser, MultiPartParser,)
+    paginate_by = 10
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(EstadoViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            aplicacion= self.request.query_params.get('aplicacion',None)
+			
+            if (dato or aplicacion):
+                if dato:
+                    qset = (Q(nombre__icontains=dato) | Q(app__icontains=dato))
+                if aplicacion:
+                    qset = (Q(app__exact=aplicacion))
+
+                queryset = self.model.objects.filter(qset).order_by('orden')
+			#utilizar la variable ignorePagination para quitar la paginacion
+            ignorePagination= self.request.query_params.get('ignorePagination',None)
+            if ignorePagination is None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            serializer = self.get_serializer(queryset,many=True)
+            return Response({'message':'','success':'ok','data':serializer.data})			
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+class TipoViewSet(viewsets.ModelViewSet):
+    """
+		Retorna una lista de tipos, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y aplicacion.<br/>
+		Igualmente puede utilizar los siguientes parametros:<br/><br/>
+		<b>{aplicacion=TEXTO}</b>: Retorna la lista de estados  con el nombre de la aplicacion del TEXTO escrito.<br/>
+		Es posible utilizar los parametros combinados, por ejemplo: buscar en la lista de estados aquellos que contentan determinado texto en su nombre o aplicacion.
+	"""
+    model=Tipo
+    queryset = model.objects.all()
+    serializer_class = TipoSerializer
+    parser_classes=(FormParser, MultiPartParser,)
+    paginate_by = 10
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(TipoViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            aplicacion= self.request.query_params.get('aplicacion',None)
+			
+            if (dato or aplicacion):
+                if dato:
+                    qset = (Q(nombre__icontains=dato) | Q(app__icontains=dato))
+                if aplicacion:
+                    qset = (Q(app__exact=aplicacion))
+
+                queryset = self.model.objects.filter(qset).order_by('orden')
+			#utilizar la variable ignorePagination para quitar la paginacion
+            ignorePagination= self.request.query_params.get('ignorePagination',None)
+            if ignorePagination is None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            serializer = self.get_serializer(queryset,many=True)
+            return Response({'message':'','success':'ok','data':serializer.data})			
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PersonaViewSet(viewsets.ModelViewSet):
+    """
+	Retorna una lista de personas, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y rut.<br/>
+    """
+    model=Persona
+    queryset = model.objects.all()
+    serializer_class = PersonaSerializer
+    paginate_by = 25
+    nombre_modulo=''
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(PersonaViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+
+            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
+
+            if (dato):
+                qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
+            
+            queryset = self.model.objects.filter(qset)
+
+            page = self.paginate_queryset(queryset)
+
+            if sin_paginacion is None: 
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            else:
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})	
+        
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def create(self, request, *args, **kwargs):
+
+        if request.method == 'POST':				
+            try:
+                serializer = PersonaSerializer(data=request.DATA,context={'request': request})
+                persona = Persona.objects.filter(rut=request.DATA['rut'])
+
+                if persona:
+                    return Response({'message':'Ya existe una persona registrada con el rut digitado','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+                
+                if serializer.is_valid():
+                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self,request,*args,**kwargs):
+    
+        if request.method == 'PUT':
+            try:
+                partial = kwargs.pop('partial', False)
+                instance = self.get_object()
+                serializer = PersonaSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+				
+                if serializer.is_valid():
+                    valores=Persona.objects.get(id=instance.id)
+                    serializer.save()
+                    return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self,request,*args,**kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
+class ProyectoViewSet(viewsets.ModelViewSet):
+    """
+	Retorna una lista de proyectos, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y descripcion.<br/>
+    """
+    model=Proyecto
+    queryset = model.objects.all()
+    serializer_class = ProyectoSerializer
+    paginate_by = 25
+    nombre_modulo=''
+
+    def retrieve(self,request,*args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = super(ProyectoViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+
+            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
+
+            if (dato):
+                qset = (Q(nombre__icontains=dato)|Q(descripcion__icontains=dato))
+            
+            queryset = self.model.objects.filter(qset)
+
+            page = self.paginate_queryset(queryset)
+
+            if sin_paginacion is None: 
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            else:
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})	
+        
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def create(self, request, *args, **kwargs):
+
+        if request.method == 'POST':				
+            try:
+                serializer = ProyectoSerializer(data=request.DATA,context={'request': request})
+                
+                if serializer.is_valid():
+                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self,request,*args,**kwargs):
+    
+        if request.method == 'PUT':
+            try:
+                partial = kwargs.pop('partial', False)
+                instance = self.get_object()
+                serializer = ProyectoSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+				
+                if serializer.is_valid():
+                    valores=Persona.objects.get(id=instance.id)
+                    serializer.save()
+                    return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self,request,*args,**kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
+    
 

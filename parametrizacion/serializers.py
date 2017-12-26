@@ -1,13 +1,14 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from parametrizacion.models import Pais, Region, Municipio, Empresa, Cargo, User
+from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
+User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto)
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('url', 'first_name', 'last_name', 'email', 'mobile', 'password','groups')
+        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups')
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
@@ -30,7 +31,7 @@ class RegionSerializer(serializers.HyperlinkedModelSerializer):
     pais = PaisSerializer(read_only=True)
     class Meta:
         model = Region
-    fields=('id','nombre','pais','pais_id')
+        fields=('id','nombre','pais','pais_id')
 
 class MunicipioSerializer(serializers.HyperlinkedModelSerializer):
     
@@ -55,3 +56,45 @@ class CargoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Cargo
 		fields=('id','nombre','empresa','nivel')
+
+class PersonaSerializer(serializers.HyperlinkedModelSerializer):
+    municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
+    municipio = MunicipioSerializer(read_only=True)
+    class Meta:
+        model = Persona
+        fields=('url','id','primerApellido','segundoApellido','rut','genero','estadoCivil','correoElectronico','telefono','telefonoFijo','municipio','municipio_id' )
+
+class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
+    persona=PersonaSerializer(read_only=True)
+    persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+    empresa=EmpresaSerializer(read_only=True)
+    empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
+    class Meta:
+        model = ContactoEmpresa
+        fields=('id','persona','persona_id','empresa','empresa_id')
+
+class EstadoSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Estado
+        fields=('id', 'app', 'nombre', 'icono', 'color')
+
+class TipoSerializer(serializers.HyperlinkedModelSerializer):
+    	
+    class Meta:
+        model = Tipo
+        fields=( 'id','app', 'nombre' , 'icono' , 'color')
+
+class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
+    municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
+    municipio = MunicipioSerializer(read_only=True)
+    estado_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Estado.objects.all())
+    estado = EstadoSerializer(read_only=True)
+    tipo_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Tipo.objects.all())
+    tipo = EstadoSerializer(read_only=True)
+    empresa=EmpresaSerializer(read_only=True)
+    empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
+    class Meta:
+        model = Proyecto
+        fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
+        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado','estado_id','tipo','tipo_id')
