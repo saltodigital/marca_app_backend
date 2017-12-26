@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url,include
 from rest_framework import routers
-#from parametrizacion import views
+from parametrizacion import views
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
-'''
+
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
@@ -33,7 +33,7 @@ router.register(r'estados', views.EstadoViewSet)
 router.register(r'tipos', views.TipoViewSet)
 router.register(r'personas', views.PersonaViewSet)
 router.register(r'proyectos', views.ProyectoViewSet)
-'''
+
 schema_view = get_schema_view(title='Documentacion Marca APP API',renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
 
 urlpatterns = [
@@ -41,5 +41,5 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^docs', schema_view, name="docs"),
+    url(r'^api/', include(router.urls)), 
 ]
-
