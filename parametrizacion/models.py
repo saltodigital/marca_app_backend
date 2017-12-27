@@ -146,6 +146,8 @@ class Proyecto(BaseModel):
 class ContactoProyecto(BasePermisoModel):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
-    
 
-
+class ProyectoUsuario(BasePermisoModel):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE) 

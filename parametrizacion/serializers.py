@@ -107,3 +107,14 @@ class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ContactoProyecto
         fields=('id','persona','persona_id','proyecto','proyecto_id')
+
+class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
+    usuario=UserSerializer(read_only=True)
+    usuario_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=User.objects.all())
+    cargo=CargoSerializer(read_only=True)
+    cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
+    proyecto=ProyectoSerializer(read_only=True)
+    proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
+    class Meta:
+        model = ContactoProyecto
+        fields=('id','usuario','usuario_id','proyecto','proyecto_id')
