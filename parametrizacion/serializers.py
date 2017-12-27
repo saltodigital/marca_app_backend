@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
-User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto)
+User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto)
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -98,3 +98,12 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
         'fechaFin','municipio','municipio_id','empresa','empresa_id','estado','estado_id','tipo','tipo_id')
+
+class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
+    persona=PersonaSerializer(read_only=True)
+    persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+    proyecto=ProyectoSerializer(read_only=True)
+    proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
+    class Meta:
+        model = ContactoProyecto
+        fields=('id','persona','persona_id','proyecto','proyecto_id')

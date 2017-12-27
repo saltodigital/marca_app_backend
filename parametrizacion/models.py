@@ -139,9 +139,13 @@ class Proyecto(BaseModel):
     fechaInicio = 	models.DateField(null = True , blank = True)
     fechaFin = models.DateField(null = True , blank = True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    
+
     class Meta:
         unique_together = (("nombre" , "empresa"),)
+
+class ContactoProyecto(BasePermisoModel):
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     
 
 
