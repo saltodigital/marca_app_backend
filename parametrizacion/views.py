@@ -77,7 +77,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 
 	def list(self, request, *args, **kwargs):
 		try:
-			queryset = super(ProvinciaViewSet, self).get_queryset()
+			queryset = super(PaisViewSet, self).get_queryset()
 			dato = self.request.query_params.get('dato', None)
 			if dato:
 				qset = (
