@@ -121,7 +121,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 			try:
 				partial = kwargs.pop('partial', False)
 				instance = self.get_object()
-				serializer = PaisSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+				serializer = PaisSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				if serializer.is_valid():
 					self.perform_update(serializer)
 					return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
@@ -192,10 +192,10 @@ class RegionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
-                serializer = RegionSerializer(data=request.DATA,context={'request': request})
+                serializer = RegionSerializer(data=request.data,context={'request': request})
 
                 if serializer.is_valid():
-                    serializer.save(pais_id=request.DATA['pais_id'])
+                    serializer.save(pais_id=request.data['pais_id'])
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
@@ -210,7 +210,7 @@ class RegionViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = RegionSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = RegionSerializer(instance,data=request.data,context={'request': request},partial=partial)
                 if serializer.is_valid():
                     self.perform_update(serializer)
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
@@ -282,10 +282,10 @@ class MunicipioViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
-                serializer = MunicipioSerializer(data=request.DATA,context={'request': request})
+                serializer = MunicipioSerializer(data=request.data,context={'request': request})
 
                 if serializer.is_valid():
-                    serializer.save(region_id=request.DATA['region_id'])
+                    serializer.save(region_id=request.data['region_id'])
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
@@ -300,7 +300,7 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = MunicipioSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = MunicipioSerializer(instance,data=request.data,context={'request': request},partial=partial)
                 if serializer.is_valid():
                     self.perform_update(serializer)
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
@@ -426,15 +426,15 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
         if request.method == 'POST':				
             try:
-                serializer = EmpresaSerializer(data=request.DATA,context={'request': request})
-                empresa = Empresa.objects.filter(rut=request.DATA['rut'])
+                serializer = EmpresaSerializer(data=request.data,context={'request': request})
+                empresa = Empresa.objects.filter(rut=request.data['rut'])
 
                 if empresa:
                     return Response({'message':'Ya existe una empresa registrada con el rut digitado','success':'fail',
                     'data':''},status=status.HTTP_400_BAD_REQUEST)
                 
                 if serializer.is_valid():
-                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -448,7 +448,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = EmpresaSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = EmpresaSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=Empresa.objects.get(id=instance.id)
@@ -523,10 +523,10 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
         '''
         if request.method == 'POST':				
             try:
-                serializer = EmpresaContactoSerializer(data=request.DATA,context={'request': request})
+                serializer = EmpresaContactoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(empresa_id=request.DATA['empresa_id'],persona_id=request.DATA['empresa_id'])
+                    serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['empresa_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -542,7 +542,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = EmpresaContactoSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = EmpresaContactoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=ContactoEmpresa.objects.get(id=instance.id)
@@ -708,15 +708,15 @@ class PersonaViewSet(viewsets.ModelViewSet):
 
         if request.method == 'POST':				
             try:
-                serializer = PersonaSerializer(data=request.DATA,context={'request': request})
-                persona = Persona.objects.filter(rut=request.DATA['rut'])
+                serializer = PersonaSerializer(data=request.data,context={'request': request})
+                persona = Persona.objects.filter(rut=request.data['rut'])
 
                 if persona:
                     return Response({'message':'Ya existe una persona registrada con el rut digitado','success':'fail',
                     'data':''},status=status.HTTP_400_BAD_REQUEST)
                 
                 if serializer.is_valid():
-                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -730,7 +730,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = PersonaSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = PersonaSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=Persona.objects.get(id=instance.id)
@@ -797,10 +797,10 @@ class ProyectoViewSet(viewsets.ModelViewSet):
 
         if request.method == 'POST':				
             try:
-                serializer = ProyectoSerializer(data=request.DATA,context={'request': request})
+                serializer = ProyectoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(municipio_id=request.DATA['municipio_id'])
+                    serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -814,7 +814,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = ProyectoSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = ProyectoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=Persona.objects.get(id=instance.id)
@@ -890,10 +890,10 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
         '''
         if request.method == 'POST':				
             try:
-                serializer = ProyectoContactoViewSet(data=request.DATA,context={'request': request})
+                serializer = ProyectoContactoViewSet(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.DATA['proyecto_id'],persona_id=request.DATA['persona_id'])
+                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -909,7 +909,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = ProyectoContactoSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = ProyectoContactoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=ContactoProyecto.objects.get(id=instance.id)
@@ -987,11 +987,11 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         '''
         if request.method == 'POST':				
             try:
-                serializer = ProyectoUsuarioViewSet(data=request.DATA,context={'request': request})
+                serializer = ProyectoUsuarioViewSet(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.DATA['proyecto_id'],persona_id=request.DATA['persona_id'],
-                    cargo_id=request.DATA['cargo_id'])
+                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'],
+                    cargo_id=request.data['cargo_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -1007,7 +1007,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             try:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = ProyectoUsuarioSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+                serializer = ProyectoUsuarioSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
                     valores=ProyectoUsuario.objects.get(id=instance.id)
