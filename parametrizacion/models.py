@@ -97,6 +97,7 @@ class User(AbstractUser):
 class ContactoEmpresa(BasePermisoModel):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=255,null = True , blank = True) 
 
 class Estado(BaseModel):
     app = models.CharField(max_length = 250)
@@ -146,6 +147,7 @@ class Proyecto(BaseModel):
 class ContactoProyecto(BasePermisoModel):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=255,null = True , blank = True) 
 
 class ProyectoUsuario(BasePermisoModel):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
