@@ -112,7 +112,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 				else:
 				 	return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
 			 		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-			except as e:
+			except e:
 			 	return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
 			  		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
