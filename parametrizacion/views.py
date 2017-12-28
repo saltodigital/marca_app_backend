@@ -11,11 +11,11 @@ from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, User, 
-Estado, Tipo, Persona, Proyecto,ContactoEmpresa,ContactoProyecto)
+Estado, Tipo, Persona, Proyecto,ContactoEmpresa,ContactoProyecto,ProyectoUsuario)
 from marcaAPP.resource import MessageNC, ResponseNC
 from parametrizacion.serializers import (UserSerializer, GroupSerializer, PaisSerializer, TipoSerializer,
 RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer, PersonaSerializer,
-ProyectoSerializer,EmpresaContactoSerializer,ProyectoContactoSerializer)
+ProyectoSerializer,EmpresaContactoSerializer,ProyectoContactoSerializer, ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -836,7 +836,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
 
 class ProyectoContactoViewSet(viewsets.ModelViewSet):
     """
-	API ENDPOINT de Empresa contacto o la relación de un proyecto y sus contactos.
+	API ENDPOINT de Proyecto contacto o la relación de un proyecto y sus contactos.
     """
     model=ContactoProyecto
     queryset = model.objects.all()
@@ -886,7 +886,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         '''
-        Crea un nuevo contacto, requiere id_empresa e id_persona.
+        Crea un nuevo contacto, requiere proyecto_id y persona_id.
         '''
         if request.method == 'POST':				
             try:
@@ -930,3 +930,102 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
+class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
+    """
+	API ENDPOINT de Proyecto usuario o la relación de un proyecto y sus usuarios.
+    """
+    model=ProyectoUsuario
+    queryset = model.objects.all()
+    serializer_class = ProyectoUsuarioSerializer
+    paginate_by = 20
+    nombre_modulo=''
+
+    def retrieve(self,request,*args, **kwargs):
+        '''
+        Devuelve un contacto
+        '''
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        '''
+        Retorna una lista de usuarios asociados a proyectos, se puede buscar por proyecto o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
+        '''
+        try:
+            queryset = super(ProyectoUsuarioViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+
+            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
+
+            if (dato):
+                qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
+            
+            queryset = self.model.objects.filter(qset)
+
+            page = self.paginate_queryset(queryset)
+
+            if sin_paginacion is None: 
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+            
+            else:
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})	
+        
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def create(self, request, *args, **kwargs):
+        '''
+        Crea la relacion de usuario y proyecto, requiere proyecto_id , usuario_id, cargo_id.
+        '''
+        if request.method == 'POST':				
+            try:
+                serializer = ProyectoUsuarioViewSet(data=request.DATA,context={'request': request})
+                
+                if serializer.is_valid():
+                    serializer.save(proyecto_id=request.DATA['proyecto_id'],persona_id=request.DATA['persona_id'],
+                    cargo_id=request.DATA['cargo_id'])
+                    return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self,request,*args,**kwargs):
+        '''
+        Actualiza la relacion.
+        '''
+        if request.method == 'PUT':
+            try:
+                partial = kwargs.pop('partial', False)
+                instance = self.get_object()
+                serializer = ProyectoUsuarioSerializer(instance,data=request.DATA,context={'request': request},partial=partial)
+				
+                if serializer.is_valid():
+                    valores=ProyectoUsuario.objects.get(id=instance.id)
+                    serializer.save()
+                    return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self,request,*args,**kwargs):
+        '''
+        Elimina un usuario de un proyecto.
+        '''
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+

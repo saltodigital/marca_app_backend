@@ -117,4 +117,4 @@ class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
     proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
     class Meta:
         model = ContactoProyecto
-        fields=('id','usuario','usuario_id','proyecto','proyecto_id')
+        fields=('id','usuario','usuario_id','proyecto','proyecto_id','cargo','cargo_id')
