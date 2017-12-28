@@ -103,7 +103,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 	def create(self, request, *args, **kwargs):
 		if request.method == 'POST':
 			try:
-				serializer = PaisSerializer(data=request.DATA,context={'request': request})
+				serializer = PaisSerializer(data=request.data,context={'request': request})
 
 				if serializer.is_valid():
 					serializer.save()
@@ -112,7 +112,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 				else:
 				 	return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
 			 		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-			except e:
+			except Exception as e:
 			 	return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
 			  		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
