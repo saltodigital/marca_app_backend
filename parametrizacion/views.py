@@ -473,7 +473,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
     model=ContactoEmpresa
     queryset = model.objects.all()
     serializer_class = EmpresaContactoSerializer
-    paginate_by = 20
+    paginate_by = 2
     nombre_modulo=''
 
     def retrieve(self,request,*args, **kwargs):
