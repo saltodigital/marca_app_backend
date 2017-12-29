@@ -9,6 +9,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, User, 
 Estado, Tipo, Persona, Proyecto,ContactoEmpresa,ContactoProyecto,ProyectoUsuario)
