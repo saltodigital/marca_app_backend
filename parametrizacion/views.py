@@ -995,7 +995,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoUsuarioSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'],
+                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'],
                     cargo_id=request.data['cargo_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
