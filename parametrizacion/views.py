@@ -370,8 +370,8 @@ class CargoViewSet(viewsets.ModelViewSet):
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})
-        except:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor' + str(e),'status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Fin Api rest para Cargo
 
