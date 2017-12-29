@@ -351,7 +351,7 @@ class CargoViewSet(viewsets.ModelViewSet):
                 empresa_id = empresa_filtro
                 qset=(Q(empresa_id=empresa_id))
             else:
-                empresa_id = self.request.query_params.get('empresa_id', request.user.usuario.empresa.id)
+                empresa_id = self.request.query_params.get('empresa_id', request.user.cargo.empresa.id)
                 qset=(Q(empresa=empresa_id))
 
             if dato:
