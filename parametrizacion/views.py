@@ -500,8 +500,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(persona__nombre__icontains=dato)|Q(persona__rut__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
@@ -687,8 +686,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
@@ -776,8 +774,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(nombre__icontains=dato)|Q(descripcion__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
@@ -867,8 +864,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(persona__nombre__icontains=dato)|Q(persona__rut__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
@@ -964,8 +960,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
