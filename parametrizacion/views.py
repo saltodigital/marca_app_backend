@@ -903,7 +903,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
         '''
