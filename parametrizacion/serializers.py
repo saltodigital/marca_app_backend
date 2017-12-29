@@ -47,7 +47,7 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
 	#logo = serializers.ImageField(required=False)
     class Meta:
         model = Empresa
-        fields=('url','id','nombre','rut','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id')
+        fields=('url','id','nombre','rut','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id','field')
 
 #Api rest para Cargo
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
