@@ -894,7 +894,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
         '''
         if request.method == 'POST':				
             try:
-                serializer = ProyectoContactoViewSet(data=request.data,context={'request': request})
+                serializer = ProyectoContactoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
                     serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
@@ -992,7 +992,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         '''
         if request.method == 'POST':				
             try:
-                serializer = ProyectoUsuarioViewSet(data=request.data,context={'request': request})
+                serializer = ProyectoUsuarioSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
                     serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'],
