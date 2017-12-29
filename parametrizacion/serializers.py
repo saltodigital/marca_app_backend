@@ -52,7 +52,7 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
 #Api rest para Cargo
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
     cliente = EmpresaSerializer(read_only=True)
-    cliente_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cliente.objects.all())
+    cliente_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
     class Meta:
         model = Cargo
         fields=('id','nombre','cliente_id','cliente','nivel')
