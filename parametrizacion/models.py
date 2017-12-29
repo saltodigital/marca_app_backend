@@ -69,13 +69,7 @@ class Persona(BaseModel):
         return self.nombre + ' ' + self.primerApellido
 
 class Empresa(BaseModel):
-    rut = models.CharField(max_length=50, unique=True,validators=[
-        RegexValidator(
-            regex='[0-9]{10}[0-9]',
-            message='Rut no valido',
-            code='invalid_rut'
-        ),
-    ])
+    rut = models.CharField(max_length=50, unique=True)
     field = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=255)
     correoElectronico = models.EmailField(max_length=200)
