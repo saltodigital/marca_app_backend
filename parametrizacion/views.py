@@ -508,6 +508,8 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                     serializer = self.get_serializer(page,many=True)	
                     return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
             
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
@@ -693,7 +695,9 @@ class PersonaViewSet(viewsets.ModelViewSet):
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
                     return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
-            
+                
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
@@ -780,8 +784,10 @@ class ProyectoViewSet(viewsets.ModelViewSet):
             if sin_paginacion is None: 
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
-                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
-            
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+                
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
@@ -870,8 +876,10 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             if sin_paginacion is None: 
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
-                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
             
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
@@ -966,8 +974,10 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             if sin_paginacion is None: 
                 if page is not None:
                     serializer = self.get_serializer(page,many=True)	
-                return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
+                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
             
+                serializer = self.get_serializer(queryset,many=True)
+                return Response({'message':'','success':'ok','data':serializer.data})
             else:
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
