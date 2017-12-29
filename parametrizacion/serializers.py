@@ -89,15 +89,15 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
     municipio = MunicipioSerializer(read_only=True)
     estado_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Estado.objects.all())
-    estado = EstadoSerializer(read_only=True)
+    #estado = EstadoSerializer(read_only=True)
     tipo_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Tipo.objects.all())
-    tipo = EstadoSerializer(read_only=True)
+    #tipo = EstadoSerializer(read_only=True)
     empresa=EmpresaSerializer(read_only=True)
     empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
     class Meta:
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
-        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado','estado_id','tipo','tipo_id')
+        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id')
 
 class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
     persona=PersonaSerializer(read_only=True)
