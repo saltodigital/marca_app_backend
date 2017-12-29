@@ -83,7 +83,7 @@ class TipoSerializer(serializers.HyperlinkedModelSerializer):
     	
     class Meta:
         model = Tipo
-        fields=( 'id','app', 'nombre' , 'icono' , 'color','orden')
+        fields=( 'id','app', 'nombre' , 'icono' , 'color')
 
 class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
