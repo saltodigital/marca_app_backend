@@ -383,7 +383,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     model=Empresa
     queryset = model.objects.all()
     serializer_class = EmpresaSerializer
-    paginate_by = 10
+    paginate_by = 2
     nombre_modulo=''
 
     def retrieve(self,request,*args, **kwargs):
@@ -439,7 +439,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':serializer.data},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
     
@@ -473,7 +473,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
     model=ContactoEmpresa
     queryset = model.objects.all()
     serializer_class = EmpresaContactoSerializer
-    paginate_by = 2
+    paginate_by = 20
     nombre_modulo=''
 
     def retrieve(self,request,*args, **kwargs):
