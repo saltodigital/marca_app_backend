@@ -80,9 +80,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 			queryset = super(PaisViewSet, self).get_queryset()
 			dato = self.request.query_params.get('dato', None)
 			if dato:
-				qset = (
-					Q(nombre__icontains=dato)
-					)
+				qset = (Q(nombre__icontains=dato))
 				queryset = self.model.objects.filter(qset)
 			#utilizar la variable ignorePagination para quitar la paginacion
 			ignorePagination= self.request.query_params.get('ignorePagination',None)
@@ -405,8 +403,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
             if (dato):
                 qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
-            
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
 
