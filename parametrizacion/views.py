@@ -356,8 +356,7 @@ class CargoViewSet(viewsets.ModelViewSet):
 
             if dato:
                 qset = qset & (Q(nombre__icontains=dato))
-
-            queryset = self.model.objects.filter(qset)
+                queryset = self.model.objects.filter(qset)
 
             if paginacion==None:
                 page = self.paginate_queryset(queryset)
