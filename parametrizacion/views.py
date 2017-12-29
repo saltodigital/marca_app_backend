@@ -526,7 +526,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                 serializer = EmpresaContactoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['empresa_id'])
+                    serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
