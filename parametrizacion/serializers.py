@@ -55,7 +55,7 @@ class CargoSerializer(serializers.HyperlinkedModelSerializer):
     cliente_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cliente.objects.all())
 	class Meta:
 		model = Cargo
-		fields=('id','nombre','cliente','nivel')
+		fields=('id','nombre','cliente','cliente_id','nivel')
 
 class PersonaSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
