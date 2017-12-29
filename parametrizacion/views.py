@@ -802,7 +802,8 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(municipio_id=request.data['municipio_id'])
+                    serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
+                    tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
