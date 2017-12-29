@@ -53,9 +53,9 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
     cliente = EmpresaSerializer(read_only=True)
     cliente_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cliente.objects.all())
-	class Meta:
-		model = Cargo
-		fields=('id','nombre','cliente_id','cliente','nivel')
+    class Meta:
+        model = Cargo
+        fields=('id','nombre','cliente_id','cliente','nivel')
 
 class PersonaSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
