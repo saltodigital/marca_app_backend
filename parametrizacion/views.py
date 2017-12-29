@@ -217,8 +217,8 @@ class RegionViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-            except:
-                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self,request,*args,**kwargs):
@@ -383,7 +383,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     model=Empresa
     queryset = model.objects.all()
     serializer_class = EmpresaSerializer
-    paginate_by = 2
+    paginate_by = 15
     nombre_modulo=''
 
     def retrieve(self,request,*args, **kwargs):
