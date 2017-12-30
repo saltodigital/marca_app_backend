@@ -64,7 +64,7 @@ class Persona(BaseModel):
 
 class Empresa(BaseModel):
     rut = models.CharField(max_length=50, unique=True)
-    field = models.CharField(max_length=100, unique=True)
+    field = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
     correoElectronico = models.EmailField(max_length=200)
     telefono = models.CharField(max_length=100)
@@ -137,7 +137,13 @@ class ContactoProyecto(BasePermisoModel):
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=255,null = True , blank = True) 
 
+    class Meta:
+        unique_together = (("persona" , "proyecto"),)
+
 class ProyectoUsuario(BasePermisoModel):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE) 
+
+    class Meta:
+        unique_together = (("usuario" , "proyecto"),)

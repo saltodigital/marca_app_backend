@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Persona, Pais, User, Region, Municipio, Cargo
+from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
+User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto,ProyectoUsuario)
 from django.contrib.auth.admin import UserAdmin
 from parametrizacion.forms import (
     CustomUserChangeForm,
@@ -58,3 +59,31 @@ class UserAdmin(CustomUserAdmin):
     )
 
 admin.site.register(User,UserAdmin)
+
+class UsarioProyectoline(admin.TabularInline):
+    model = ProyectoUsuario
+    extra = 3
+    classes = ['collapse']
+
+class ContactoProyectoInline(admin.TabularInline):
+    model = ContactoProyecto
+    extra = 3
+    classes = ['collapse']
+
+class ContactoEmpresaline(admin.TabularInline):
+    model = ContactoEmpresa
+    extra = 3
+    classes = ['collapse']
+    
+class AdminProyecto(admin.ModelAdmin):
+    inlines = [ UsarioProyectoline,ContactoProyectoInline ]
+    list_display = ('nombre', 'descripcion')
+    
+admin.site.register(Proyecto, AdminProyecto)
+
+class AdminEmpresa(admin.ModelAdmin):
+    inlines = [ ContactoEmpresaline, ]
+    list_display = ('nombre', 'rut')
+    
+admin.site.register(Empresa, AdminEmpresa)
+
