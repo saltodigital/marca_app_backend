@@ -301,7 +301,7 @@ class MunicipioViewSet(viewsets.ModelViewSet):
                 instance = self.get_object()
                 serializer = MunicipioSerializer(instance,data=request.data,context={'request': request},partial=partial)
                 if serializer.is_valid():
-                    self.perform_update(serializer)
+                    serializer.save(region_id=request.data['region_id'])
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
@@ -450,8 +450,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 serializer = EmpresaSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=Empresa.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -545,8 +544,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                 serializer = EmpresaContactoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=ContactoEmpresa.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -667,7 +665,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
     model=Persona
     queryset = model.objects.all()
     serializer_class = PersonaSerializer
-    paginate_by = 25
+    paginate_by = 15
     nombre_modulo=''
 
     def retrieve(self,request,*args, **kwargs):
@@ -734,8 +732,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                 serializer = PersonaSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=Persona.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -820,8 +817,8 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=Persona.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
+                    tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -916,8 +913,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoContactoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=ContactoProyecto.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -1015,8 +1011,8 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoUsuarioSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    valores=ProyectoUsuario.objects.get(id=instance.id)
-                    serializer.save()
+                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'],
+                    cargo_id=request.data['cargo_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
