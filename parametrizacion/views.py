@@ -198,7 +198,7 @@ class RegionViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
@@ -211,11 +211,11 @@ class RegionViewSet(viewsets.ModelViewSet):
                 instance = self.get_object()
                 serializer = RegionSerializer(instance,data=request.data,context={'request': request},partial=partial)
                 if serializer.is_valid():
-                    self.perform_update(serializer)
+                    serializer.save(pais_id=request.data['pais_id'])
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos' + str(e),'success':'error',
