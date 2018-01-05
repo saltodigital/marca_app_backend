@@ -48,13 +48,7 @@ class Persona(BaseModel):
         (u'1',u'Masculino'),
         (u'2',u'Femenino')
     )
-    rut = models.CharField(max_length=50, unique=True,validators=[
-        RegexValidator(
-            regex='[0-9]{10}[0-9]',
-            message='Rut no valido',
-            code='invalid_rut'
-        ),
-    ])
+    rut = models.CharField(max_length=50, unique=True)
     primerApellido = models.CharField(max_length=100)
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
@@ -69,14 +63,8 @@ class Persona(BaseModel):
         return self.nombre + ' ' + self.primerApellido
 
 class Empresa(BaseModel):
-    rut = models.CharField(max_length=50, unique=True,validators=[
-        RegexValidator(
-            regex='[0-9]{10}[0-9]',
-            message='Rut no valido',
-            code='invalid_rut'
-        ),
-    ])
-    field = models.CharField(max_length=100, unique=True)
+    rut = models.CharField(max_length=50, unique=True)
+    field = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
     correoElectronico = models.EmailField(max_length=200)
     telefono = models.CharField(max_length=100)
@@ -97,6 +85,7 @@ class User(AbstractUser):
 class ContactoEmpresa(BasePermisoModel):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=255,null = True , blank = True) 
 
 class Estado(BaseModel):
     app = models.CharField(max_length = 250)
@@ -139,9 +128,22 @@ class Proyecto(BaseModel):
     fechaInicio = 	models.DateField(null = True , blank = True)
     fechaFin = models.DateField(null = True , blank = True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    
+
     class Meta:
         unique_together = (("nombre" , "empresa"),)
-    
 
+class ContactoProyecto(BasePermisoModel):
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=255,null = True , blank = True) 
 
+    class Meta:
+        unique_together = (("persona" , "proyecto"),)
+
+class ProyectoUsuario(BasePermisoModel):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE) 
+
+    class Meta:
+        unique_together = (("usuario" , "proyecto"),)
