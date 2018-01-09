@@ -21,7 +21,7 @@ class RetrasoSerializer(serializers.HyperlinkedModelSerializer):
     proyecto=ProyectoSerializer(read_only=True)
     proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
     class Meta:
-        model = Asistencia
+        model = Retraso
         fields=('id','usuario','usuario_id','proyecto','proyecto_id','fecha','motivo')
 
 
