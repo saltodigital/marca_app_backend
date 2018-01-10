@@ -977,7 +977,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
 
     def retrieve(self,request,*args, **kwargs):
         '''
-        Devuelve un contacto
+        Devuelve un usuario de un proyecto
         '''
         try:
             instance = self.get_object()
@@ -988,16 +988,21 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):
         '''
-        Retorna una lista de usuarios asociados a proyectos, se puede buscar por proyecto o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
+        Retorna una lista de usuarios asociados a proyectos, se puede buscar por usuario(id_usuario) o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
         '''
         try:
             queryset = super(ProyectoUsuarioViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-
+            dato = self.request.query_params.get('id_usuario', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if (dato):
                 qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
+                if id_usuario:
+                    if dato:
+                        qset=qset&(Q(usuario_id=id_usuario))
+                    else:
+                        qset=(Q(usuario_id=id_usuario))
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
