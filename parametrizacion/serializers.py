@@ -3,18 +3,6 @@ from rest_framework import serializers
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
 User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto,ProyectoUsuario)
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id')
-
-    def create(self, validated_data):
-        user = super(UserSerializer, self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -73,6 +61,22 @@ class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ContactoEmpresa
         fields=('id','persona','persona_id','empresa','empresa_id','cargo')
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    persona=PersonaSerializer(read_only=True)
+    persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+    cargo=CargoSerializer(read_only=True)
+    cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
+    class Meta:
+        model = User
+        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','persona_id','cargo','cargo_id')
+
+    def create(self, validated_data):
+        user = super(UserSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class EstadoSerializer(serializers.HyperlinkedModelSerializer):
 

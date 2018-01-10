@@ -48,7 +48,9 @@ class Persona(BaseModel):
         (u'1',u'Masculino'),
         (u'2',u'Femenino')
     )
-    rut = models.CharField(max_length=50, unique=True)
+    rut = models.CharField(max_length=50, unique=True,
+    validators=[RegexValidator(regex='^([0-9]+-[0-9K])$',
+    message='Rut no valido',code='invalid_rut')])
     primerApellido = models.CharField(max_length=100)
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
@@ -63,7 +65,9 @@ class Persona(BaseModel):
         return self.nombre + ' ' + self.primerApellido
 
 class Empresa(BaseModel):
-    rut = models.CharField(max_length=50, unique=True)
+    rut = models.CharField(max_length=50, unique=True,
+    validators=[RegexValidator(regex='^([0-9]+-[0-9K])$',
+    message='Rut no valido',code='invalid_rut')])
     field = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
     correoElectronico = models.EmailField(max_length=200)

@@ -38,6 +38,40 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
+    def list(self, request, *args, **kwargs):
+        '''
+        Retorna una lista de usuarios puedes buscar por nombre o id_cargo
+        '''
+        try:
+            queryset = super(UserViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            id_cargo = self.request.query_params.get('id_cargo', None)
+
+            if dato or id_cargo:
+                if dato:
+                    qset = (Q(persona__nombre__icontains=dato))
+                if id_cargo:
+                    if dato:
+                        qset=qset&(Q(cargo_id=id_cargo))
+                    else:
+                        qset=(Q(cargo_id=id_cargo))
+
+                queryset = self.model.objects.filter(qset)
+            #utilizar la variable ignorePagination para quitar la paginacion
+            ignorePagination= self.request.query_params.get('ignorePagination',None)
+            if ignorePagination is None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({ResponseNC.message:'','success':'ok',
+                    ResponseNC.data:serializer.data})
+
+            serializer = self.get_serializer(queryset,many=True)
+            return Response({ResponseNC.message:'','success':'ok',ResponseNC.data:serializer.data})
+        except:
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
