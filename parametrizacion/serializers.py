@@ -77,7 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
     cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
     class Meta:
         model = User
-        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','cargo')
+        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','persona_id','cargo','cargo_id')
     
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
