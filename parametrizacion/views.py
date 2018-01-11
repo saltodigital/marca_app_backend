@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
             try:
                 serialized = UserSerializer(data=request.data)
                 if serialized.is_valid():
-                    serialized.save()
+                    serialized.save(persona_id=request.data['persona_id'],cargo_id=request.data['cargo_id'])
                     return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serializer.data,status:status.HTTP_201_CREATED})
                 else:
                     return Response({ResponseNC.message:serialized._errors,ResponseNC.status:'fail',status:status.HTTP_400_BAD_REQUEST})
@@ -432,11 +432,16 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         try:
             queryset = super(EmpresaViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-
+            id_empresa = self.request.query_params.get('id_empresa', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if (dato):
                 qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
+                if id_empresa:
+                    if dato:
+                        qset=qset&(Q(empresa_id=id_empresa))
+                    else:
+                        qset=(Q(empresa_id=id_empresa))
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
