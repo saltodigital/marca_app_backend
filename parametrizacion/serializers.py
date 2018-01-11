@@ -70,7 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
     cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
     class Meta:
         model = User
-        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','persona_id','cargo','cargo_id')
+        fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','cargo')
     '''
     def restore_object(self, attrs, instance=None):
         user = super(UserSerializer, self).restore_object(attrs, instance)
