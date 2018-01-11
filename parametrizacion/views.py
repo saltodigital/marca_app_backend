@@ -71,7 +71,6 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
