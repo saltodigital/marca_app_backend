@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
-                serialized = UserSerializer(data=request.data)
+                serialized = UserSerializer(data=request.data,,context={'request': request})
                 if serialized.is_valid():
                     serialized.save()
                     return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serialized.data,status:status.HTTP_201_CREATED})
