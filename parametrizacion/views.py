@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 serialized = UserSerializer(data=request.data)
                 if serialized.is_valid():
                     serialized.save()
-                    return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serializer.data,status:status.HTTP_201_CREATED})
+                    return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serialized.data,status:status.HTTP_201_CREATED})
                 else:
                     return Response({ResponseNC.message:serialized._errors,ResponseNC.status:'fail',status:status.HTTP_400_BAD_REQUEST})
             except Exception as e:
