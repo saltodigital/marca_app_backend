@@ -72,11 +72,26 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','persona_id','cargo','cargo_id')
 
+    def restore_object(self, attrs, instance=None):
+        user = super(UserSerializer, self).restore_object(attrs, instance)
+        user.set_password(attrs['password'])
+        return user
+    '''
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
-        user.save()
+        user.save
         return user
+    '''
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('password', 'first_name', 'last_name', 'email',)
+        write_only_fields = ('password',)
+        read_only_fields = ('is_staff', 'is_superuser', 'is_active', 'date_joined',)
+ 
+    
 
 class EstadoSerializer(serializers.HyperlinkedModelSerializer):
 
