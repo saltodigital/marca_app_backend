@@ -72,17 +72,20 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
+        """
+	    Crear un usuario persona_id, cargo_id son solo lectura
+	    """
         if request.method == 'POST':
             try:
                 serializer = UserSerializer(data=request.data,context={'request': request})
 
                 if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(persona_id=request.data['persona_id'],cargo_id=request.data['cargo_id'])
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
-                    ResponseNC.data:serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({ResponseNC.message:serializer.errors},'success':'fail',
+                    ResponseNC.data:'',status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
