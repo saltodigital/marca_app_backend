@@ -65,9 +65,9 @@ class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     persona=PersonaSerializer(read_only=True)
-    persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+    #persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
     cargo=CargoSerializer(read_only=True)
-    cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
+    #cargo_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Cargo.objects.all())
     class Meta:
         model = User
         fields = ('url', 'first_name', 'last_name', 'email', 'password','groups','username','id','persona','cargo')
