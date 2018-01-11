@@ -74,12 +74,15 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
-                serialized = UserSerializer(data=request.data,context={'request': request})
-                if serialized.is_valid():
-                    serialized.save()
-                    return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serialized.data,status:status.HTTP_201_CREATED})
+                serializer = UserSerializer(data=request.data,context={'request': request})
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
+                    ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'Datos requeridos no fueron obtenidos',ResponseNC.status:'fail',status:status.HTTP_400_BAD_REQUEST})
+                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+                    ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
