@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
 User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto,ProyectoUsuario)
-
+from rest_framework.validators import UniqueValidator
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -63,7 +63,14 @@ class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
         fields=('id','persona','persona_id','empresa','empresa_id','cargo')
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=User.objects.all())]
+            )
+    username = serializers.CharField(
+            validators=[UniqueValidator(queryset=User.objects.all())]
+            )
+    password = serializers.CharField(min_length=8,write_only=True)
     persona=PersonaSerializer(read_only=True)
     #persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
     cargo=CargoSerializer(read_only=True)
@@ -80,11 +87,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
-        user.save
         return user
     
-
-
 class EstadoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
