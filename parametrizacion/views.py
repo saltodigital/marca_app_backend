@@ -84,8 +84,8 @@ class UserViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:serializer.errors},'success':'fail',
-                    ResponseNC.data:'',status=status.HTTP_400_BAD_REQUEST)
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
+                    ResponseNC.data:'',status=status.HTTP_400_BAD_REQUEST})
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
