@@ -38,17 +38,56 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
+    def list(self, request, *args, **kwargs):
+        '''
+        Retorna una lista de usuarios puedes buscar por nombre o id_cargo
+        '''
+        try:
+            queryset = super(UserViewSet, self).get_queryset()
+            dato = self.request.query_params.get('dato', None)
+            id_cargo = self.request.query_params.get('id_cargo', None)
+
+            if dato or id_cargo:
+                if dato:
+                    qset = (Q(persona__nombre__icontains=dato))
+                if id_cargo:
+                    if dato:
+                        qset=qset&(Q(cargo_id=id_cargo))
+                    else:
+                        qset=(Q(cargo_id=id_cargo))
+
+                queryset = self.model.objects.filter(qset)
+            #utilizar la variable ignorePagination para quitar la paginacion
+            ignorePagination= self.request.query_params.get('ignorePagination',None)
+            if ignorePagination is None:
+                page = self.paginate_queryset(queryset)
+                if page is not None:
+                    serializer = self.get_serializer(page,many=True)	
+                    return self.get_paginated_response({ResponseNC.message:'','success':'ok',
+                    ResponseNC.data:serializer.data})
+
+            serializer = self.get_serializer(queryset,many=True)
+            return Response({ResponseNC.message:'','success':'ok',ResponseNC.data:serializer.data})
+        except:
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def create(self, request, *args, **kwargs):
+        """
+	    Crear un usuario persona_id, cargo_id son solo lectura
+	    """
         if request.method == 'POST':
             try:
-                serialized = UserSerializer(data=request.data)
-                if serialized.is_valid():
-                    serialized.save()
-                    return Response({ResponseNC.message:'Usuario creado con exito',ResponseNC.status:'success',ResponseNC.data:serializer.data,status:status.HTTP_201_CREATED})
+                serializer = UserSerializer(data=request.data,context={'request': request})
+
+                if serializer.is_valid():
+                    serializer.save(persona_id=request.data['persona_id'],cargo_id=request.data['cargo_id'])
+                    return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
+                    ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:serialized._errors,ResponseNC.status:'fail',status:status.HTTP_400_BAD_REQUEST})
-            except:
-                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
+                    ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -398,11 +437,16 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         try:
             queryset = super(EmpresaViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-
+            id_empresa = self.request.query_params.get('id_empresa', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if (dato):
                 qset = (Q(nombre__icontains=dato)|Q(rut__icontains=dato))
+                if id_empresa:
+                    if dato:
+                        qset=qset&(Q(empresa_id=id_empresa))
+                    else:
+                        qset=(Q(empresa_id=id_empresa))
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
@@ -943,7 +987,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
 
     def retrieve(self,request,*args, **kwargs):
         '''
-        Devuelve un contacto
+        Devuelve un usuario de un proyecto
         '''
         try:
             instance = self.get_object()
@@ -954,16 +998,21 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):
         '''
-        Retorna una lista de usuarios asociados a proyectos, se puede buscar por proyecto o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
+        Retorna una lista de usuarios asociados a proyectos, se puede buscar por usuario(id_usuario) o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
         '''
         try:
             queryset = super(ProyectoUsuarioViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-
+            dato = self.request.query_params.get('id_usuario', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if (dato):
                 qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
+                if id_usuario:
+                    if dato:
+                        qset=qset&(Q(usuario_id=id_usuario))
+                    else:
+                        qset=(Q(usuario_id=id_usuario))
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'rest_framework_swagger',
-    'parametrizacion'
+    'parametrizacion',
+    'asistencia',
 ]
 
 MIDDLEWARE = [
