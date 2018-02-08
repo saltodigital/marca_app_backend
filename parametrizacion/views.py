@@ -762,7 +762,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -779,7 +779,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
