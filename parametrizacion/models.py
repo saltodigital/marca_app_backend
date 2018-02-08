@@ -48,6 +48,13 @@ class Persona(BaseModel):
         (u'1',u'Masculino'),
         (u'2',u'Femenino')
     )
+    estadoCiv = (
+        (u'0',u'[Seleccione...]'),
+        (u'1',u'Soltero'),
+        (u'2',u'Separado'),
+        (u'3',u'Casado'),
+        (u'4',u'Viudo'),
+    )
     rut = models.CharField(max_length=50, unique=True,
     validators=[RegexValidator(regex='^([0-9]+-[0-9K])$',
     message='Rut no valido',code='invalid_rut')])
@@ -55,7 +62,7 @@ class Persona(BaseModel):
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
     genero = models.CharField(max_length=1,choices=generos, default=0)
-    estadoCivil = models.CharField(max_length=1, default=0)
+    estadoCivil = models.CharField(max_length=1, choices=estadoCiv,default=0)
     correoElectronico = models.EmailField(max_length=200)
     telefono = models.CharField(max_length=100)
     telefonoFijo = models.CharField(max_length=100)
