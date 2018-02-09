@@ -55,9 +55,7 @@ class Persona(BaseModel):
         (u'3',u'Casado'),
         (u'4',u'Viudo'),
     )
-    rut = models.CharField(max_length=50, unique=True,
-    validators=[RegexValidator(regex='^([0-9]+-[0-9K])$',
-    message='Rut no valido',code='invalid_rut')])
+    rut = models.CharField(max_length=50, unique=True)
     primerApellido = models.CharField(max_length=100)
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
