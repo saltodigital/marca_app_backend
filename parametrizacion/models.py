@@ -50,10 +50,9 @@ class Persona(BaseModel):
     )
     estadoCiv = (
         (u'0',u'[Seleccione...]'),
-        (u'1',u'Soltero'),
-        (u'2',u'Separado'),
-        (u'3',u'Casado'),
-        (u'4',u'Viudo'),
+        (u'S',u'Soltero'),
+        (u'C',u'Casado'),
+        (u'O',u'Otro'),
     )
     rut = models.CharField(max_length=50, unique=True)
     primerApellido = models.CharField(max_length=100)
