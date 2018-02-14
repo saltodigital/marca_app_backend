@@ -246,12 +246,11 @@ class UsuarioAsigProyectoViewSet(viewsets.ReadOnlyModelViewSet):
     
     def list(self, request, *args, **kwargs):
         '''
-        Retorna una lista de usuarios asociados a proyectos, se puede buscar por usuario(id_usuario) o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
+        Retorna una lista de proyectos del usuario
         '''
         try:
             queryset = super(UsuarioAsigProyectoViewSet, self).get_queryset()
             id_usuario = request.user.id
-            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
             ListPendientes = []
             
             qset=qset&(Q(usuario_id=id_usuario))
@@ -270,7 +269,7 @@ class UsuarioAsigProyectoViewSet(viewsets.ReadOnlyModelViewSet):
 
             return Response({'message':'','success':'ok','data':ListPendientes})	
         
-        except:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 		
