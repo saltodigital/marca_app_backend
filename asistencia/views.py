@@ -14,6 +14,8 @@ from rest_framework.pagination import PageNumberPagination
 from asistencia.models import (Horario, Asistencia, Retraso)
 from marcaAPP.resource import MessageNC, ResponseNC
 from asistencia.serializers import (AsistenciaSerializer, RetrasoSerializer)
+from parametrizacion.models import (ProyectoUsuario)
+from parametrizacion.serializers import (ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -223,3 +225,52 @@ class RetrasoViewSet(viewsets.ModelViewSet):
         except:
             return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
+class UsuarioAsigProyectoViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+	API ENDPOINT proyectos del usuario.
+    """
+    model=ProyectoUsuario
+    queryset = model.objects.all()
+    serializer_class = ProyectoUsuarioSerializer
+
+    def retrieve(self,request,*args, **kwargs):
+        '''
+        Devuelve un usuario de un proyecto
+        '''
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response({'message':'','success':'ok','data':serializer.data})
+        except:
+            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
+    
+    def list(self, request, *args, **kwargs):
+        '''
+        Retorna una lista de usuarios asociados a proyectos, se puede buscar por usuario(id_usuario) o por nombre. la variable sin_paginacion indica que no paginaremos el resultado
+        '''
+        try:
+            queryset = super(UsuarioAsigProyectoViewSet, self).get_queryset()
+            id_usuario = request.user.id
+            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
+            ListPendientes = []
+            
+            qset=qset&(Q(usuario_id=id_usuario))
+            ListProyectos = self.model.objects.filter(qset)
+
+            for item in ListProyectos:
+                lista={
+                    "id": item.proyecto.id,
+                    "nombre": item.proyecto.nombre,
+                    "latitud": item.proyecto.latitud,
+                    "longitud": item.proyecto.longitud,
+                    "hora_entrada": '9:00',
+                    "hora_salida":'19:00'
+                }
+                ListPendientes.append(lista)
+
+            return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+        except:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+		
