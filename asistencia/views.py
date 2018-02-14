@@ -19,6 +19,7 @@ from parametrizacion.serializers import (ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import api_view
 
 
 class AsistenciaViewSet(viewsets.ModelViewSet):
@@ -224,50 +225,31 @@ class RetrasoViewSet(viewsets.ModelViewSet):
         except:
             return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
-class UsuarioAsigProyectoViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-	API ENDPOINT proyectos del usuario.
-    """
-    model=ProyectoUsuario
-    queryset = model.objects.all()
-    serializer_class = ProyectoUsuarioSerializer
+@api_view(['GET'])
+def listaProyectos(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        id_usuario = request.user.id
+        ListPendientes = []
+        qset=(Q(usuario_id=id_usuario))
+        ListProyectos = ProyectoUsuario.objects.filter(qset)
 
-    def retrieve(self,request,*args, **kwargs):
-        '''
-        Devuelve un usuario de un proyecto
-        '''
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response({'message':'','success':'ok','data':serializer.data})
-        except:
-            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
-    
-    def list(self, request, *args, **kwargs):
-        '''
-        Retorna una lista de proyectos del usuario
-        '''
-        try:
-            queryset = super(UsuarioAsigProyectoViewSet, self).get_queryset()
-            id_usuario = request.user.id
-            ListPendientes = []
-            qset=(Q(usuario_id=id_usuario))
-            ListProyectos = self.model.objects.filter(qset)
-
-            for item in ListProyectos:
-                lista={
+        for item in ListProyectos:
+            lista={
                     "id": item.proyecto.id,
                     "nombre": item.proyecto.nombre,
                     "latitud": item.proyecto.latitud,
                     "longitud": item.proyecto.longitud,
                     "hora_entrada": '9:00',
                     "hora_salida":'19:00'
-                }
-                ListPendientes.append(lista)
+            }
+            ListPendientes.append(lista)
 
-            return Response({'message':'','success':'ok','data':ListPendientes})	
+        return Response({'message':'','success':'ok','data':ListPendientes})	
         
-        except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 		
