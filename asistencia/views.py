@@ -158,8 +158,7 @@ class RetrasoViewSet(viewsets.ModelViewSet):
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if id_usuario:
-                if id_proyecto:
-                    qset=(Q(usuario_id=id_usuario))
+                qset=(Q(usuario_id=id_usuario))
                 
                 queryset = self.model.objects.filter(qset)
 
@@ -252,8 +251,7 @@ class UsuarioAsigProyectoViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = super(UsuarioAsigProyectoViewSet, self).get_queryset()
             id_usuario = request.user.id
             ListPendientes = []
-            
-            qset=qset&(Q(usuario_id=id_usuario))
+            qset=(Q(usuario_id=id_usuario))
             ListProyectos = self.model.objects.filter(qset)
 
             for item in ListProyectos:
