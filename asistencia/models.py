@@ -25,6 +25,5 @@ class Asistencia(BasePermisoModel):
 class Retraso(BasePermisoModel):
     fecha = models.DateTimeField(auto_now_add = True)
     motivo = models.CharField(max_length=255)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 

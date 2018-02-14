@@ -153,18 +153,12 @@ class RetrasoViewSet(viewsets.ModelViewSet):
             queryset = super(RetrasoViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
             id_usuario = self.request.query_params.get('id_usuario', None)
-            id_proyecto = self.request.query_params.get('id_proyecto', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
-            if id_proyecto or id_usuario:
+            if id_usuario:
                 if id_proyecto:
-                    qset = (Q(poyecto__id=id_proyecto))
-                if id_usuario:
-                    if id_proyecto:
-                        qset=qset&(Q(usuario_id=id_usuario))
-                    else:
-                        qset=(Q(usuario_id=id_usuario))
-
+                    qset=(Q(usuario_id=id_usuario))
+                
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
@@ -192,7 +186,7 @@ class RetrasoViewSet(viewsets.ModelViewSet):
                 serializer = RetrasoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
+                    serializer.save(usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -211,7 +205,7 @@ class RetrasoViewSet(viewsets.ModelViewSet):
                 serializer = RetrasoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
+                    serializer.save(usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -220,7 +214,7 @@ class RetrasoViewSet(viewsets.ModelViewSet):
     
     def destroy(self,request,*args,**kwargs):
         '''
-        Elimina una asistencia.
+        Elimina un retraso.
         '''
         try:
             instance = self.get_object()
