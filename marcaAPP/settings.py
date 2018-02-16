@@ -94,6 +94,7 @@ USE_L10N = True
 
 USE_TZ = False
 
+TIME_INPUT_FORMATS = ['%H:%M:%S']
 
 from django.utils.translation import ugettext_lazy as _
 LANGUAGES = (
