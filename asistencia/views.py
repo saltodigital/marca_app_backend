@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view
-import datetime
+from datetime import date
 
 class AsistenciaViewSet(viewsets.ModelViewSet):
     """
@@ -260,9 +260,9 @@ def ultimasAsistencias(request):
     try:
         id_usuario = request.user.id
         ListPendientes = []
-        now = datetime.datetime.now()
+        now = date.today()
         qset=(Q(usuario_id=id_usuario))
-        qset=qset&(Q(entrada__date=now.date))
+        qset=qset&(Q(entrada__date=now))
         listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
 
         for item in listAsistencias:
