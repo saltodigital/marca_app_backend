@@ -848,7 +848,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
