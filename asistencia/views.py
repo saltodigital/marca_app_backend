@@ -263,7 +263,7 @@ def ultimasAsistencias(request):
         qset=(Q(usuario_id=id_usuario))
         listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
 
-        for item in ListAsistencias:
+        for item in listAsistencias:
             lista={
                 "id": item.id,
                 "nombre_empresa": item.proyecto.empresa.nombre,
