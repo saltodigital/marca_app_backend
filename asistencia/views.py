@@ -260,13 +260,15 @@ def ultimasAsistencias(request):
     try:
         id_usuario = request.user.id
         ListPendientes = []
+        now = datetime.datetime.now()
         qset=(Q(usuario_id=id_usuario))
+        qset=qset&(Q(entrada__date=now.date))
         listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
 
         for item in listAsistencias:
             lista={
                 "id": item.id,
-                "nombre_empresa": item.proyecto.empresa.nombre,
+                "nombre_proyecto": item.proyecto.nombre,
                 "hora_marcacion": item.horaEntrada,
                 "fecha_marcación":item.entrada
             }

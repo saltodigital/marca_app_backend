@@ -18,9 +18,9 @@ class Horario(BaseModel):
 
 class Asistencia(BasePermisoModel):
     entrada = models.DateField(auto_now_add = True)
-    horaEntrada = 	models.TimeField(default=datetime.time(16, 00))
-    longitud = models.DecimalField(max_digits=9, decimal_places=6)
-    latitud = models.DecimalField(max_digits=9, decimal_places=6)
+    horaEntrada = 	models.TimeField()
+    longitud = models.FloatField()
+    latitud = models.FloatField()
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
