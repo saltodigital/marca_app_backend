@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import url,include
 from rest_framework import routers
 from parametrizacion import views
-from asistencia.views import AsistenciaViewSet, RetrasoViewSet, listaProyectos
+from asistencia.views import AsistenciaViewSet, RetrasoViewSet, listaProyectos, ultimasAsistencias
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
@@ -50,4 +50,5 @@ urlpatterns = [
     url(r'^docs', schema_view, name="docs"),
     url(r'^api/', include(router.urls)), 
     url(r'^api/proyectosAsignados/$', listaProyectos),
+    url(r'^api/ultimasAsistencias/$', ultimasAsistencias),
 ]

@@ -252,4 +252,29 @@ def listaProyectos(request):
     except Exception as e:
         return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+def ultimasAsistencias(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        id_usuario = request.user.id
+        ListPendientes = []
+        qset=(Q(usuario_id=id_usuario))
+        listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
+
+        for item in ListAsistencias:
+            lista={
+                "id": item.id,
+                "nombre_empresa": item.proyecto.empresa.nombre,
+                "hora_marcacion": item.horaEntrada,
+                "fecha_marcación":item.entrada
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 		
