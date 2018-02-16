@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'marcaAPP.wsgi.application'
 
 LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = 'Chile/Continental'
 
 USE_I18N = True
 
