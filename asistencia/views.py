@@ -269,7 +269,7 @@ def ultimasAsistencias(request):
             lista={
                 "id": item.id,
                 "nombre_proyecto": item.proyecto.nombre,
-                "hora_marcacion": item.horaEntrada.hour + ':' + item.horaEntrada.minutes + ':' item.horaEntrada.second,
+                "hora_marcacion": item.horaEntrada.time,
                 "fecha_marcación":item.entrada
             }
             ListPendientes.append(lista)
