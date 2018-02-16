@@ -262,7 +262,7 @@ def ultimasAsistencias(request):
         ListPendientes = []
         now = date.today()
         qset=(Q(usuario_id=id_usuario))
-        qset=qset&(Q(entrada__date=now))
+        qset=qset&(Q(entrada=now))
         listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
 
         for item in listAsistencias:
