@@ -5,6 +5,7 @@ from django.conf import settings
 from parametrizacion.models import (BaseModel, BasePermisoModel, User, Persona, Estado, Tipo, Proyecto)
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+import datetime
 
 class Horario(BaseModel):
     fechaInicio = 	models.DateField()
@@ -16,15 +17,15 @@ class Horario(BaseModel):
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
 
 class Asistencia(BasePermisoModel):
-    entrada = models.DateTimeField(auto_now_add = True)
-    longitud = models.DecimalField(max_digits=9, decimal_places=6)
-    latitud = models.DecimalField(max_digits=9, decimal_places=6)
+    entrada = models.DateField(auto_now_add = True)
+    horaEntrada = 	models.TimeField(auto_now_add=True)
+    longitud = models.FloatField()
+    latitud = models.FloatField()
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Retraso(BasePermisoModel):
     fecha = models.DateTimeField(auto_now_add = True)
     motivo = models.CharField(max_length=255)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 

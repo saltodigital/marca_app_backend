@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'marcaAPP.wsgi.application'
 
 LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -94,6 +94,7 @@ USE_L10N = True
 
 USE_TZ = False
 
+TIME_INPUT_FORMATS = ['%H:%M:%S']
 
 from django.utils.translation import ugettext_lazy as _
 LANGUAGES = (

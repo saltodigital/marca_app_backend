@@ -14,10 +14,13 @@ from rest_framework.pagination import PageNumberPagination
 from asistencia.models import (Horario, Asistencia, Retraso)
 from marcaAPP.resource import MessageNC, ResponseNC
 from asistencia.serializers import (AsistenciaSerializer, RetrasoSerializer)
+from parametrizacion.models import (ProyectoUsuario)
+from parametrizacion.serializers import (ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from rest_framework.decorators import api_view
+from datetime import date
 
 class AsistenciaViewSet(viewsets.ModelViewSet):
     """
@@ -90,10 +93,10 @@ class AsistenciaViewSet(viewsets.ModelViewSet):
                     serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
         '''
@@ -109,7 +112,7 @@ class AsistenciaViewSet(viewsets.ModelViewSet):
                     serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
@@ -153,18 +156,11 @@ class RetrasoViewSet(viewsets.ModelViewSet):
             queryset = super(RetrasoViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
             id_usuario = self.request.query_params.get('id_usuario', None)
-            id_proyecto = self.request.query_params.get('id_proyecto', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
-            if id_proyecto or id_usuario:
-                if id_proyecto:
-                    qset = (Q(poyecto__id=id_proyecto))
-                if id_usuario:
-                    if id_proyecto:
-                        qset=qset&(Q(usuario_id=id_usuario))
-                    else:
-                        qset=(Q(usuario_id=id_usuario))
-
+            if id_usuario:
+                qset=(Q(usuario_id=id_usuario))
+                
                 queryset = self.model.objects.filter(qset)
 
             page = self.paginate_queryset(queryset)
@@ -192,10 +188,10 @@ class RetrasoViewSet(viewsets.ModelViewSet):
                 serializer = RetrasoSerializer(data=request.data,context={'request': request})
                 
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
+                    serializer.save(usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -211,16 +207,16 @@ class RetrasoViewSet(viewsets.ModelViewSet):
                 serializer = RetrasoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 				
                 if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
+                    serializer.save(usuario_id=request.data['usuario_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         '''
-        Elimina una asistencia.
+        Elimina un retraso.
         '''
         try:
             instance = self.get_object()
@@ -229,3 +225,58 @@ class RetrasoViewSet(viewsets.ModelViewSet):
         except:
             return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def listaProyectos(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        id_usuario = request.user.id
+        ListPendientes = []
+        qset=(Q(usuario_id=id_usuario))
+        ListProyectos = ProyectoUsuario.objects.filter(qset)
+
+        for item in ListProyectos:
+            lista={
+                    "id": item.proyecto.id,
+                    "nombre": item.proyecto.nombre,
+                    "latitud": item.proyecto.latitud,
+                    "longitud": item.proyecto.longitud,
+                    "hora_entrada": '9:00',
+                    "hora_salida":'19:00'
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def ultimasAsistencias(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        id_usuario = request.user.id
+        ListPendientes = []
+        today = date.today()
+        qset=(Q(usuario_id=id_usuario))
+        qset=qset&(Q(entrada=today))
+        listAsistencias = Asistencia.objects.filter(qset).reverse()[:5]
+
+        for item in listAsistencias:
+            lista={
+                "id": item.id,
+                "nombre_proyecto": item.proyecto.nombre,
+                "hora_marcacion": item.horaEntrada.strftime("%H:%M:%S"),
+                "fecha_marcación":item.entrada
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+		

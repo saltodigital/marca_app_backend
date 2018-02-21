@@ -751,6 +751,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
 
         if request.method == 'POST':				
             try:
+                datos = request.data;
                 serializer = PersonaSerializer(data=request.data,context={'request': request})
                 persona = Persona.objects.filter(rut=request.data['rut'])
 
@@ -762,10 +763,10 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos (' + str(e) + ')','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
     
@@ -779,7 +780,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
@@ -847,7 +848,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)

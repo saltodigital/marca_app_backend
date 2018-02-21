@@ -48,14 +48,18 @@ class Persona(BaseModel):
         (u'1',u'Masculino'),
         (u'2',u'Femenino')
     )
-    rut = models.CharField(max_length=50, unique=True,
-    validators=[RegexValidator(regex='^([0-9]+-[0-9K])$',
-    message='Rut no valido',code='invalid_rut')])
+    estadoCiv = (
+        (u'0',u'[Seleccione...]'),
+        (u'S',u'Soltero'),
+        (u'C',u'Casado'),
+        (u'O',u'Otro'),
+    )
+    rut = models.CharField(max_length=50, unique=True)
     primerApellido = models.CharField(max_length=100)
     segundoApellido = models.CharField(max_length=100)
     fechaNacimiento = models.DateField()
     genero = models.CharField(max_length=1,choices=generos, default=0)
-    estadoCivil = models.CharField(max_length=1, default=0)
+    estadoCivil = models.CharField(max_length=1, choices=estadoCiv,default=0)
     correoElectronico = models.EmailField(max_length=200)
     telefono = models.CharField(max_length=100)
     telefonoFijo = models.CharField(max_length=100)
@@ -90,6 +94,13 @@ class ContactoEmpresa(BasePermisoModel):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=255,null = True , blank = True) 
+
+class EmpresaUsuario(BasePermisoModel):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
+
+    class Meta:
+        unique_together = (("usuario" , "empresa"),)
 
 class Estado(BaseModel):
     app = models.CharField(max_length = 250)
