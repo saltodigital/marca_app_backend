@@ -95,6 +95,13 @@ class ContactoEmpresa(BasePermisoModel):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=255,null = True , blank = True) 
 
+class EmpresaUsuario(BasePermisoModel):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
+
+    class Meta:
+        unique_together = (("usuario" , "empresa"),)
+
 class Estado(BaseModel):
     app = models.CharField(max_length = 250)
     color = models.CharField(max_length = 250 , blank= True)
