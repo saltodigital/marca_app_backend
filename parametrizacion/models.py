@@ -78,6 +78,9 @@ class Empresa(BaseModel):
     telefono = models.CharField(max_length=100)
     telefonoFijo = models.CharField(max_length=100)
     municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    numero = models.CharField(max_length=100,blank=True,null=True)
+    estado = models.BooleanField( default = 1 )
+    fechaEstadoProyecto = models.DateField(null = True , blank = True)
 
 class Cargo(BaseModel):
     nivel = models.IntegerField()
@@ -159,6 +162,9 @@ class ProyectoUsuario(BasePermisoModel):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE) 
+    desde = models.DateField(null = True , blank = True)
+    hasta = models.DateField(null = True , blank = True)
+    horas = models.FloatField(default=0)
 
     class Meta:
         unique_together = (("usuario" , "proyecto"),)
