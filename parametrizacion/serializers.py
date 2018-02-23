@@ -110,7 +110,8 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
-        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id')
+        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id',
+        'idProyecto','nombreCalle','numero','codigoPostal','ip')
 
 class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
     persona=PersonaSerializer(read_only=True)

@@ -146,6 +146,11 @@ class Proyecto(BaseModel):
     fechaInicio = 	models.DateField(null = True , blank = True)
     fechaFin = models.DateField(null = True , blank = True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    idProyecto = models.CharField(max_length=10,null = True , blank = True)
+    nombreCalle = models.CharField(max_length=255,null = True , blank = True)
+    numero = models.CharField(max_length=50,null = True , blank = True)
+    codigoPostal = models.CharField(max_length=50,null = True , blank = True)
+    ip = models.CharField(max_length=25,null = True , blank = True)
 
     class Meta:
         unique_together = (("nombre" , "empresa"),)
