@@ -392,7 +392,7 @@ class CargoViewSet(viewsets.ModelViewSet):
                 qset=(Q(cliente_id=empresa_id))
             else:
                 empresa_id = self.request.query_params.get('empresa_id', request.user.cargo.cliente.id)
-                qset=(Q(cliente=empresa_id))
+                qset=(Q(cliente_id=empresa_id))
 
             if dato:
                 qset = qset & (Q(nombre__icontains=dato))
@@ -412,6 +412,51 @@ class CargoViewSet(viewsets.ModelViewSet):
                 return Response({'message':'','success':'ok','data':serializer.data})
         except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor' + str(e),'status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            try:
+                serializer = CargoSerializer(data=request.data,context={'request': request})
+
+                if serializer.is_valid():
+                    serializer.save(cliente_id=request.data['cliente_id'])
+                    return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
+                    ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
+                ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self,request,*args,**kwargs):
+        if request.method == 'PUT':
+            try:
+                partial = kwargs.pop('partial', False)
+                instance = self.get_object()
+                serializer = CargoSerializer(instance,data=request.data,context={'request': request},partial=partial)
+                if serializer.is_valid():
+                    serializer.save(cliente_id=request.data['cliente_id'])
+                    return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
+                    ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
+                else:
+                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos' + str(e),'success':'error',
+                ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self,request,*args,**kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
+            ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
+            ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+
+    
 
 #Fin Api rest para Cargo
 
