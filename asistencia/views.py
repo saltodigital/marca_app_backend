@@ -389,9 +389,9 @@ def listaDeNovedades(request):
             lista={
                     "id": item.usuario.id,
                     "gerencia":'Prueba',
-                    "supervisor": request.user.persona.nombre + ' ' request.user.persona.primerApellido,
+                    "supervisor": request.user.persona.nombre + ' ' + request.user.persona.primerApellido,
                     "proyecto": item.proyecto.nombre,
-                    "trabajador": item.usuario.persona.nombre + ' ' item.usuario.persona.primerApellido,
+                    "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
                     "cargo": item.cargo.nombre,
                     "hora_ingreso": '9:00',
                     "marca_ingreso":'19:00',
