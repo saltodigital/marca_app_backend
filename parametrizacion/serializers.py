@@ -35,7 +35,9 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
 	#logo = serializers.ImageField(required=False)
     class Meta:
         model = Empresa
-        fields=('url','id','nombre','rut','direccion','correoElectronico','telefono','telefonoFijo','municipio','municipio_id','field')
+        fields=('url','id','nombre','rut','direccion','correoElectronico',
+        'telefono','telefonoFijo','municipio','municipio_id','field',
+        'numero','estado','fechaEstadoProyecto')
 
 #Api rest para Cargo
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
@@ -108,7 +110,8 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
-        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id')
+        'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id',
+        'idProyecto','nombreCalle','numero','codigoPostal','ip')
 
 class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
     persona=PersonaSerializer(read_only=True)
@@ -128,4 +131,4 @@ class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
     proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
     class Meta:
         model = ProyectoUsuario
-        fields=('id','usuario','usuario_id','proyecto','proyecto_id','cargo','cargo_id')
+        fields=('id','usuario','usuario_id','proyecto','proyecto_id','cargo','cargo_id','desde','hasta','horas')
