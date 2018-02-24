@@ -35,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
     def list(self, request, *args, **kwargs):
@@ -68,7 +68,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
             serializer = self.get_serializer(queryset,many=True)
             return Response({ResponseNC.message:'','success':'ok',ResponseNC.data:serializer.data})
-        except:
+        except Exception as e:
             return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -111,7 +111,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 			instance = self.get_object()
 			serializer = self.get_serializer(instance)
 			return Response({ResponseNC.message:'',ResponseNC.status:'success',ResponseNC.data:serializer.data})
-		except:
+		except Exception as e:
 			return Response({ResponseNC.message:MessageNC['vacio'],'success':'fail',ResponseNC.data:''},status=status.HTTP_404_NOT_FOUND)
 
 
@@ -134,7 +134,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 			serializer = self.get_serializer(queryset,many=True)
 			return Response({ResponseNC.message:'','success':'ok',
 					ResponseNC.data:serializer.data})			
-		except:
+		except Exception as e:
 			return Response({ResponseNC.message:MessageNC['errorServidor'],ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -148,7 +148,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 					return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
 						ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
 				else:
-				 	return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+				 	return Response({ResponseNC.message:serializer.errors,'success':'fail',
 			 		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 			except Exception as e:
 			 	return Response({ResponseNC.message:'Se presentaron errores al procesar los datos ' + str(e),'success':'error',
@@ -165,10 +165,10 @@ class PaisViewSet(viewsets.ModelViewSet):
 					return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
 						ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
 				else:
-				 	return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+				 	return Response({ResponseNC.message:serializer.errors,'success':'fail',
 			 		ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-			except:
-			 	return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+			except Exception as e:
+			 	return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
 					ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
 	def destroy(self,request,*args,**kwargs):
@@ -177,8 +177,8 @@ class PaisViewSet(viewsets.ModelViewSet):
 			self.perform_destroy(instance)
 			return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
 				ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
-		except:
-			return Response({ResponseNC.message:'Se presentaron errores al procesar la solicitud','success':'error',
+		except Exception as e:
+			return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
 			ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)	
 
 class RegionViewSet(viewsets.ModelViewSet):
@@ -194,7 +194,7 @@ class RegionViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({ResponseNC.message:'',ResponseNC.status:'success',ResponseNC.data:serializer.data})
-        except:
+        except Exception as e:
             return Response({ResponseNC.message:'No se encontraron datos','success':'fail',ResponseNC.data:''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -224,7 +224,7 @@ class RegionViewSet(viewsets.ModelViewSet):
 
             serializer = self.get_serializer(queryset,many=True)
             return Response({ResponseNC.message:'','success':'ok',ResponseNC.data:serializer.data})
-        except:
+        except Exception as e:
             return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -239,8 +239,8 @@ class RegionViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-            except:
-                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
     def update(self,request,*args,**kwargs):
@@ -266,8 +266,8 @@ class RegionViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
             ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({ResponseNC.message:'Se presentaron errores al procesar la solicitud','success':'error',
+        except Exception as e:
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
             ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
 class MunicipioViewSet(viewsets.ModelViewSet):
@@ -283,7 +283,7 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({ResponseNC.message:'',ResponseNC.status:'success',ResponseNC.data:serializer.data})
-        except:
+        except Exception as e:
             return Response({ResponseNC.message:'No se encontraron datos','success':'fail',ResponseNC.data:''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -314,7 +314,7 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(queryset,many=True)
             return Response({ResponseNC.message:'','success':'ok',
             ResponseNC.data:serializer.data})
-        except:
+        except Exception as e:
             return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor',ResponseNC.status:'error',ResponseNC.data:''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -327,10 +327,10 @@ class MunicipioViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-            except:
-                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
     def update(self,request,*args,**kwargs):
@@ -344,10 +344,10 @@ class MunicipioViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
-            except:
-                return Response({ResponseNC.message:'Se presentaron errores al procesar los datos','success':'error',
+            except Exception as e:
+                return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
                 ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self,request,*args,**kwargs):
@@ -356,8 +356,8 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
             ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({ResponseNC.message:'Se presentaron errores al procesar la solicitud','success':'error',
+        except Exception as e:
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
             ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 #Fin api rest para municipio
 
@@ -377,7 +377,7 @@ class CargoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','status':'success','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -430,7 +430,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -480,7 +480,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':serializer.data},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':serializer.data},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -497,17 +497,17 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class EmpresaContactoViewSet(viewsets.ModelViewSet):
     """
@@ -527,7 +527,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -557,7 +557,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
-        except:
+        except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -572,10 +572,10 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                     serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
         '''
@@ -591,9 +591,9 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
                     serializer.save(empresa_id=request.data['empresa_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         '''
@@ -603,8 +603,8 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class EstadoViewSet(viewsets.ModelViewSet):
     """
@@ -624,7 +624,7 @@ class EstadoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
     
@@ -672,7 +672,7 @@ class TipoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
 
     
@@ -717,7 +717,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -744,7 +744,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
-        except:
+        except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -782,15 +782,15 @@ class PersonaViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class ProyectoViewSet(viewsets.ModelViewSet):
     """
@@ -807,7 +807,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -866,17 +866,17 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProyectoContactoViewSet(viewsets.ModelViewSet):
@@ -897,7 +897,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -927,7 +927,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
-        except:
+        except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -942,7 +942,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
                     serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -961,9 +961,9 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
                     serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         '''
@@ -973,8 +973,8 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -994,7 +994,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response({'message':'','success':'ok','data':serializer.data})
-        except:
+        except Exception as e:
             return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
     
     def list(self, request, *args, **kwargs):
@@ -1029,7 +1029,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(queryset,many=True)
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
-        except:
+        except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
@@ -1045,7 +1045,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                     cargo_id=request.data['cargo_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -1065,9 +1065,9 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                     cargo_id=request.data['cargo_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
         '''
@@ -1077,6 +1077,6 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({'message':'Se presentaron errores al procesar la solicitud','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
