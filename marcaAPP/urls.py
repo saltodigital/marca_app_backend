@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.conf.urls import url,include
 from rest_framework import routers
 from parametrizacion import views
-from asistencia.views import AsistenciaViewSet, RetrasoViewSet, listaProyectos, ultimasAsistencias, HorarioViewSet
+from asistencia.views import (AsistenciaViewSet, RetrasoViewSet, listaProyectos, 
+ultimasAsistencias, HorarioViewSet,listaDeNovedades)
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 

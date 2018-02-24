@@ -375,4 +375,35 @@ def ultimasAsistencias(request):
     except Exception as e:
         return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+def listaDeNovedades(request):
+    '''
+    Retorna una lista de novedades en proyecto
+    '''
+    try:
+        id_usuario = request.user.id
+        ListPendientes = []
+        ListProyectos = ProyectoUsuario.objects.all()
+
+        for item in ListProyectos:
+            lista={
+                    "id": item.usuario.id,
+                    "gerencia":'Prueba',
+                    "supervisor": request.user.persona,
+                    "proyecto": item.proyecto.nombre,
+                    "trabajador": item.usuario.persona,
+                    "cargo": item.cargo.nombre,
+                    "hora_ingreso": '9:00',
+                    "marca_ingreso":'19:00',
+                    "envia_aviso":'',
+                    "llegada_estimada":'',
+                    "envia_ausencia":"",
+                    "sf":0
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		
