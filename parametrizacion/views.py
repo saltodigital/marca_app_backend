@@ -391,9 +391,13 @@ class CargoViewSet(viewsets.ModelViewSet):
                 empresa_id = empresa_filtro
                 qset=(Q(cliente_id=empresa_id))
             else:
-                empresa_id = self.request.query_params.get('empresa_id', request.user.cargo.cliente.id)
-                qset=(Q(cliente_id=empresa_id))
-
+                if request.user.cargo:
+                    empresa_id = request.user.cargo.cliente.id
+                    qset=(Q(cliente_id=empresa_id))
+                else:
+                    return Response({ResponseNC.message:'El usuario actual no tiene un cargo y no se pueden definir sus permisos','success':'fail',
+                    ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
+                
             if dato:
                 qset = qset & (Q(nombre__icontains=dato))
                 queryset = self.model.objects.filter(qset)
