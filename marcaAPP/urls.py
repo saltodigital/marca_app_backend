@@ -53,4 +53,5 @@ urlpatterns = [
     url(r'^api/', include(router.urls)), 
     url(r'^api/proyectosAsignados/$', listaProyectos),
     url(r'^api/ultimasAsistencias/$', ultimasAsistencias),
+    url(r'^api/listaDeNovedades/$', listaDeNovedades),
 ]
