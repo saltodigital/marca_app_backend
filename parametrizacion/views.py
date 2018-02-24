@@ -178,7 +178,7 @@ class PaisViewSet(viewsets.ModelViewSet):
 			return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
 				ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
 		except Exception as e:
-			return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
+			return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
 			ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)	
 
 class RegionViewSet(viewsets.ModelViewSet):
@@ -267,7 +267,7 @@ class RegionViewSet(viewsets.ModelViewSet):
             return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
             ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
             ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 
 class MunicipioViewSet(viewsets.ModelViewSet):
@@ -357,7 +357,7 @@ class MunicipioViewSet(viewsets.ModelViewSet):
             return Response({ResponseNC.message:'El registro se ha eliminado correctamente','success':'ok',
             ResponseNC.data:''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error',
+            return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
             ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
 #Fin api rest para municipio
 
@@ -507,7 +507,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class EmpresaContactoViewSet(viewsets.ModelViewSet):
     """
@@ -604,7 +604,7 @@ class EmpresaContactoViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class EstadoViewSet(viewsets.ModelViewSet):
     """
@@ -790,7 +790,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class ProyectoViewSet(viewsets.ModelViewSet):
     """
@@ -876,7 +876,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProyectoContactoViewSet(viewsets.ModelViewSet):
@@ -974,7 +974,7 @@ class ProyectoContactoViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
 class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -1078,5 +1078,5 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e)'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
