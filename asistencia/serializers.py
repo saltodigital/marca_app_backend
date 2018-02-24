@@ -22,4 +22,11 @@ class RetrasoSerializer(serializers.HyperlinkedModelSerializer):
         model = Retraso
         fields=('id','usuario','usuario_id','fecha','motivo')
 
+class HorarioSerializer(serializers.HyperlinkedModelSerializer):
+    proyecto=ProyectoSerializer(read_only=True)
+    proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
+    class Meta:
+        model = Horario
+        fields=('id','fechaInicio','fechaFin','proyecto','proyecto_id','horaInicio','horaFin','primerDia','ultimoDia')
+
 
