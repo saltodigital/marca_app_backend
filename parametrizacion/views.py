@@ -237,7 +237,7 @@ class RegionViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
@@ -254,7 +254,7 @@ class RegionViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos' + str(e),'success':'error',
@@ -427,7 +427,7 @@ class CargoViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido guardado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error',
@@ -444,7 +444,7 @@ class CargoViewSet(viewsets.ModelViewSet):
                     return Response({ResponseNC.message:'El registro ha sido actualizado exitosamente','success':'ok',
                     ResponseNC.data:serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({ResponseNC.message:'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail',
+                    return Response({ResponseNC.message:serializer.errors,'success':'fail',
                     ResponseNC.data:''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({ResponseNC.message:'Se presentaron errores al procesar los datos' + str(e),'success':'error',
@@ -463,7 +463,6 @@ class CargoViewSet(viewsets.ModelViewSet):
     
 
 #Fin Api rest para Cargo
-
 class EmpresaViewSet(viewsets.ModelViewSet):
     """
 	Retorna una lista de empresas, puede utilizar el parametro <b>{dato=[texto a buscar]}</b>, a traves del cual, se podra buscar por todo o parte del nombre y nit.<br/>
@@ -812,7 +811,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos (' + str(e) + ')','success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
@@ -829,7 +828,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
                     serializer.save(municipio_id=request.data['municipio_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'message':'datos requeridos no fueron recibidos (' + serializer.errors + ')','success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
