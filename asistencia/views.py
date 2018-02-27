@@ -385,7 +385,7 @@ def listaDeNovedades(request):
         ListPendientes = []
 
         today = date.today()
-        qset=qset&(Q(entrada=today))
+        qset=(Q(entrada=today))
         ListProyectos = Asistencia.objects.filter(qset)
 
         for item in ListProyectos:
