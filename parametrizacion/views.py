@@ -1146,7 +1146,8 @@ def listaProyectosConUsuarios(request):
             supervisor = ""
             contacto = ""
             if usuarios:
-                supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
+                if usuarios[0].usuario.persona:
+                    supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
 
             if contactos:
                 contacto = contactos[0].persona.nombre + " " + contactos[0].persona.primerApellido
