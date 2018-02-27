@@ -383,7 +383,10 @@ def listaDeNovedades(request):
     try:
         id_usuario = request.user.id
         ListPendientes = []
-        ListProyectos = Asistencia.objects.all()
+
+        today = date.today()
+        qset=qset&(Q(entrada=today))
+        ListProyectos = Asistencia.objects.filter(qset)
 
         for item in ListProyectos:
             if item.usuario.cargo:
@@ -403,7 +406,7 @@ def listaDeNovedades(request):
                     "proyecto": item.proyecto.nombre,
                     "trabajador":usuario ,
                     "cargo": cargo,
-                    "hora_ingreso": '9:00',
+                    "hora_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
                     "llegada_estimada":'',
