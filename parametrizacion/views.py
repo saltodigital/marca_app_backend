@@ -1149,7 +1149,7 @@ def listaProyectosConUsuarios(request):
                 supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
 
             if contactos:
-                contacto = usuarios[0].persona.nombre + " " + usuarios[0].persona.primerApellido
+                contacto = contactos[0].persona.nombre + " " + contactos[0].persona.primerApellido
 
             lista={
                     "id": item.id,
