@@ -394,7 +394,7 @@ def listaDeNovedades(request):
                     "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
                     "cargo": item.usuario.cargo.nombre,
                     "hora_ingreso": '9:00',
-                    "marca_ingreso": asistencia.horaEntrada.strftime("%H:%M:%S"),
+                    "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
                     "llegada_estimada":'',
                     "envia_ausencia":"",
