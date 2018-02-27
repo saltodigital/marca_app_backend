@@ -394,7 +394,7 @@ def listaDeNovedades(request):
             lista={
                     "id": item.id,
                     "gerencia":'Prueba',
-                    "supervisor": request.user.persona.nombre + ' ' + request.user.persona.primerApellido,
+                    "supervisor": "Janneison",
                     "proyecto": item.proyecto.nombre,
                     "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
                     "cargo": cargo,
