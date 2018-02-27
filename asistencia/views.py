@@ -383,18 +383,18 @@ def listaDeNovedades(request):
     try:
         id_usuario = request.user.id
         ListPendientes = []
-        ListProyectos = ProyectoUsuario.objects.all()
+        ListProyectos = Asistencia.objects.all()
 
         for item in ListProyectos:
             lista={
-                    "id": item.usuario.id,
+                    "id": item.id,
                     "gerencia":'Prueba',
                     "supervisor": request.user.persona.nombre + ' ' + request.user.persona.primerApellido,
                     "proyecto": item.proyecto.nombre,
                     "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
-                    "cargo": item.cargo.nombre,
+                    "cargo": item.usuario.cargo.nombre,
                     "hora_ingreso": '9:00',
-                    "marca_ingreso":'19:00',
+                    "marca_ingreso": asistencia.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
                     "llegada_estimada":'',
                     "envia_ausencia":"",
