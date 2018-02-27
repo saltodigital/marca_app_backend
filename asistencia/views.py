@@ -394,7 +394,6 @@ def listaDeNovedades(request):
             lista={
                     "id": item.id,
                     "gerencia":'Prueba',
-                    "proyecto": item.proyecto.nombre,
                     "cargo": cargo,
                     "hora_ingreso": '9:00',
                     "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
