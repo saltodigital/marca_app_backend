@@ -54,4 +54,5 @@ urlpatterns = [
     url(r'^api/proyectosAsignados/$', listaProyectos),
     url(r'^api/ultimasAsistencias/$', ultimasAsistencias),
     url(r'^api/listaDeNovedades/$', listaDeNovedades),
+    url(r'^api/listaProyectos/$', listaProyectosConUsuarios),
 ]

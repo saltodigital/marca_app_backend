@@ -1128,3 +1128,47 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def listaProyectosConUsuarios(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        #id_usuario = request.user.id
+        ListPendientes = []
+        #qset=(Q(usuario_id=id_usuario))
+        ListProyectos = Proyecto.objects.all()
+        for item in ListProyectos:
+            qset=(Q(proyecto_id=item.id))
+            usuarios = ProyectoUsuario.objects.filter(qset)
+            contactos = ContactoProyecto.objects.filter(qset)
+            cantidad = len(usuarios)
+            supervisor = ""
+            contacto = ""
+            if usuarios:
+                supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
+
+            if contactos:
+                contacto = usuarios[0].persona.nombre + " " + usuarios[0].persona.primerApellido
+
+            lista={
+                    "id": item.id,
+                    "municipio": item.municipio.nombre,
+                    "descripcion": item.descripcion,
+                    "longitud": item.longitud,
+                    "latitud": item.longitud,
+                    "empresa": item.empresa.nombre,
+                    "idProyecto": item.idProyecto,
+                    "nombreCalle": item.nombreCalle,
+                    "ip":item.ip,
+                    "usuarios":cantidad,
+                    "supervisor":supervisor,
+                    "contacto":contacto
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
