@@ -397,7 +397,7 @@ def listaDeNovedades(request):
                     "supervisor": request.user.persona.nombre + ' ' + request.user.persona.primerApellido,
                     "proyecto": item.proyecto.nombre,
                     "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
-                    "cargo": nombrcargoe,
+                    "cargo": cargo,
                     "hora_ingreso": '9:00',
                     "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
