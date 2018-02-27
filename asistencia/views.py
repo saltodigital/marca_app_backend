@@ -386,13 +386,18 @@ def listaDeNovedades(request):
         ListProyectos = Asistencia.objects.all()
 
         for item in ListProyectos:
+            if item.usuario.cargo:
+                cargo = item.usuario.cargo.nombre
+            else:
+                cargo = ""
+            
             lista={
                     "id": item.id,
                     "gerencia":'Prueba',
                     "supervisor": request.user.persona.nombre + ' ' + request.user.persona.primerApellido,
                     "proyecto": item.proyecto.nombre,
                     "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
-                    "cargo": item.usuario.cargo.nombre,
+                    "cargo": nombrcargoe,
                     "hora_ingreso": '9:00',
                     "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
