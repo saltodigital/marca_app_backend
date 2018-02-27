@@ -391,12 +391,17 @@ def listaDeNovedades(request):
             else:
                 cargo = ""
             
+            if item.usuario.persona:
+                usuario = item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido
+            else:
+                usuario = ''
+            
             lista={
                     "id": item.id,
                     "gerencia":'Prueba',
                     "supervisor": "Janneison",
                     "proyecto": item.proyecto.nombre,
-                    "trabajador": item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido,
+                    "trabajador":usuario ,
                     "cargo": cargo,
                     "hora_ingreso": '9:00',
                     "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
