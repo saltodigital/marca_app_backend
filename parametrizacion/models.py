@@ -62,8 +62,14 @@ class Persona(BaseModel):
     estadoCivil = models.CharField(max_length=1, choices=estadoCiv,default=0)
     correoElectronico = models.EmailField(max_length=200)
     telefono = models.CharField(max_length=100)
+    telefono2 = models.CharField(max_length=100,null = True , blank = True)
     telefonoFijo = models.CharField(max_length=100)
     municipio = models.ForeignKey(Municipio,on_delete=models.CASCADE)
+    nombreCalle = models.CharField(max_length=100,null = True , blank = True) 
+    numero = models.CharField(max_length=100,null = True , blank = True) 
+    cargo = models.CharField(max_length=255,null = True , blank = True) 
+    descripcionCargo = models.CharField(max_length=255,null = True , blank = True) 
+    nacionalidad = models.CharField(max_length=255,null = True , blank = True) 
     
     def __str__(self):
         return self.nombre + ' ' + self.primerApellido
@@ -151,17 +157,10 @@ class Proyecto(BaseModel):
     numero = models.CharField(max_length=50,null = True , blank = True)
     codigoPostal = models.CharField(max_length=50,null = True , blank = True)
     ip = models.CharField(max_length=25,null = True , blank = True)
+    contacto = models.ForeignKey(Persona , on_delete=models.PROTECT ,null = True , blank = True)
 
     class Meta:
         unique_together = (("nombre" , "empresa"),)
-
-class ContactoProyecto(BasePermisoModel):
-    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
-    cargo = models.CharField(max_length=255,null = True , blank = True) 
-
-    class Meta:
-        unique_together = (("persona" , "proyecto"),)
 
 class ProyectoUsuario(BasePermisoModel):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
