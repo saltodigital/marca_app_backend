@@ -103,9 +103,9 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
     municipio = MunicipioSerializer(read_only=True)
     estado_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Estado.objects.all())
-    estado = EstadoSerializer(read_only=True)
+    #estado = EstadoSerializer(read_only=True)
     tipo_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Tipo.objects.all())
-    tipo = EstadoSerializer(read_only=True)
+    #tipo = EstadoSerializer(read_only=True)
     empresa=EmpresaSerializer(read_only=True)
     empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
     contacto=PersonaSerializer(read_only=True)
@@ -114,7 +114,7 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
         'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id',
-        'idProyecto','nombreCalle','numero','codigoPostal','ip','estado','tipo','contacto','contacto_id')
+        'idProyecto','nombreCalle','numero','codigoPostal','ip','contacto','contacto_id')
 
 class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
     usuario=UserSerializer(read_only=True)
