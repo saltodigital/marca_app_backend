@@ -954,7 +954,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         try:
             queryset = super(ProyectoUsuarioViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-            dato = self.request.query_params.get('id_usuario', None)
+            id_usuario = self.request.query_params.get('id_usuario', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
             if (dato or id_usuario):
