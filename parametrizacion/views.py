@@ -989,7 +989,12 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':				
             try:
                 serializer = ProyectoUsuarioSerializer(data=request.data,context={'request': request})
-                
+                proyectoUsu = ProyectoUsuario.objects.filter(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'])
+
+                if proyectoUsu:
+                    return Response({'message':'El trabajador ya fue asignado a este proyecto','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+
                 if serializer.is_valid():
                     serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'],
                     cargo_id=request.data['cargo_id'])
