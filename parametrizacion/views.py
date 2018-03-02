@@ -957,8 +957,9 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             dato = self.request.query_params.get('id_usuario', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
-            if (dato):
+            if (dato or id_usuario):
                 qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
+                
                 if id_usuario:
                     if dato:
                         qset=qset&(Q(usuario_id=id_usuario))
@@ -980,7 +981,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
         '''
@@ -1004,7 +1005,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                     return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
         '''
