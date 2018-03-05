@@ -890,7 +890,13 @@ class ProyectoViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':				
             try:
                 serializer = ProyectoSerializer(data=request.data,context={'request': request})
+                qset = (Q(nombre=request.data['nombre'])&Q(empresa_id=request.data['empresa_id']))
+                proyecto = Proyecto.objects.filter(qset)
                 
+                if proyecto:
+                    return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+
                 if serializer.is_valid():
                     serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
