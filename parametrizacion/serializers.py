@@ -32,11 +32,23 @@ class MunicipioSerializer(serializers.HyperlinkedModelSerializer):
 class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
     municipio = MunicipioSerializer(read_only=True)
+    proyectos = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
+    usuarios = serializers.SerializerMethodField('_proyectoUsuarios',read_only=True)
 	#logo = serializers.ImageField(required=False)
+    def _contadorProyecto(self,obj):
+        usuarios = Proyecto.objects.filter(empresa_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+    
+    def _proyectoUsuarios(self,obj):
+        usuarios = Proyecto.objects.filter(empresa_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+
     class Meta:
         model = Empresa
         fields=('url','id','nombre','rut','direccion','correoElectronico',
-        'telefono','telefonoFijo','municipio','municipio_id','field',
+        'telefono','telefonoFijo','municipio','municipio_id','field','usuarios','proyectos',
         'numero','estado','fechaEstadoProyecto')
 
 #Api rest para Cargo
