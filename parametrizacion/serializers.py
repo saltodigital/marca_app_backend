@@ -131,7 +131,7 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
         'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id',
-        'idProyecto','nombreCalle','numero','codigoPostal','ip','contacto','contacto_id')
+        'idProyecto','nombreCalle','numero','codigoPostal','ip','contacto','contacto_id','supervisor','usuarios')
 
 class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
     usuario=UserSerializer(read_only=True)
