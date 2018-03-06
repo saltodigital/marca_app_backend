@@ -106,10 +106,27 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     #estado = EstadoSerializer(read_only=True)
     tipo_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Tipo.objects.all())
     #tipo = EstadoSerializer(read_only=True)
+    usuarios = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
+    supervisor = serializers.SerializerMethodField('_proyectoSupervisor',read_only=True)
     empresa=EmpresaSerializer(read_only=True)
     empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
     contacto=PersonaSerializer(read_only=True)
     contacto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+
+    def _contadorProyecto(self,obj):
+        usuarios = ProyectoUsuario.objects.filter(proyecto_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+    
+    def _proyectoSupervisor(self,obj):
+        usuarios = ProyectoUsuario.objects.filter(proyecto_id=obj.id)
+        supervisor = ""
+        if usuarios:
+            if usuarios[0].usuario.persona:
+                supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
+
+        return supervisor
+
     class Meta:
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
