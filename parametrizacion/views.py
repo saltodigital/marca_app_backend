@@ -915,7 +915,7 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                 instance = self.get_object()
                 serializer = ProyectoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 
-                qset = (Q(nombre=request.data['nombre'])&Q(empresa_id=request.data['empresa_id'])&~Q(id = serializer.data['id']}))
+                qset = (Q(nombre=request.data['nombre'])&Q(empresa_id=request.data['empresa_id'])&~Q(id = serializer.data['id']))
                 proyecto = Proyecto.objects.filter(qset)
                 
                 if proyecto:
