@@ -916,17 +916,14 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                 serializer = ProyectoSerializer(instance,data=request.data,context={'request': request},partial=partial)
 
                 if serializer.is_valid():
-                    qset = (Q(nombre=request.data['nombre'])&Q(empresa_id=request.data['empresa_id'])&~Q(id=serializer.data.id))
-                    proyecto = Proyecto.objects.filter(qset)
-                
-                    if proyecto:
-                        return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
-                        'data':''},status=status.HTTP_400_BAD_REQUEST)
                     serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'],contacto_id=request.data['contacto_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError as ei:
+                return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
