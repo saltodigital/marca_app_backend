@@ -4,7 +4,7 @@ from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo,
 User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ProyectoUsuario)
 from asistencia.models import (Horario, Asistencia, Retraso)
 from rest_framework.validators import UniqueValidator
-
+import datetime
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
@@ -138,8 +138,8 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         cantidad = 0
         if horario:
             for item in asistencias:
-                #diferencia = (horario.horaInicio-item.horaEntrada)
-                cantidad = 1
+                diferencia = (horario.horaInicio.strftime("%H:%M") -item.horaEntrada.strftime("%H:%M"))
+                cantidad = diferencia.days, diferencia.seconds//3600, (diferencia.seconds//60)%60
              
         return cantidad
     
