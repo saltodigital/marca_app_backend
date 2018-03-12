@@ -133,11 +133,12 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         return cantidad
     
     def _puntualidad(self,obj):
-        horarios = Horario.objects.filter(proyecto_id=obj.id).first()
+        horario = Horario.objects.filter(proyecto_id=obj.id).first()
         asistencias = Asistencia.objects.filter(proyecto_id=obj.id)
         cantidad = 0
-        for item in asistencias:
-            cantidad = item.horaEntrada - horarios.horaInicio
+        if horario:
+            for item in asistencias:
+                cantidad = item.horaEntrada - horario.horaInicio
              
         return cantidad
     
