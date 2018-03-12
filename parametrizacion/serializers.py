@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
 User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ProyectoUsuario)
+from asistencia.models import (Horario, Asistencia, Retraso)
 from rest_framework.validators import UniqueValidator
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -120,6 +121,7 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     #tipo = EstadoSerializer(read_only=True)
     usuarios = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
     supervisor = serializers.SerializerMethodField('_proyectoSupervisor',read_only=True)
+    puntualidad = serializers.SerializerMethodField('_puntualidad',read_only=True)
     empresa=EmpresaSerializer(read_only=True)
     empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
     contacto=PersonaSerializer(read_only=True)
@@ -128,6 +130,15 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     def _contadorProyecto(self,obj):
         usuarios = ProyectoUsuario.objects.filter(proyecto_id=obj.id)
         cantidad = len(usuarios)
+        return cantidad
+    
+    def _puntualidad(self,obj):
+        horarios = Horario.objects.filter(proyecto_id=obj.id).first()
+        asistencias = Asistencia.objects.filter(proyecto_id=obj.id)
+        cantidad = 0
+        for item in asistencias:
+            cantidad = item.horaEntrada - horarios.horaInicio
+             
         return cantidad
     
     def _proyectoSupervisor(self,obj):
