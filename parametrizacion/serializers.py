@@ -138,7 +138,7 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
         cantidad = 0
         if horario:
             for item in asistencias:
-                diferencia = item.horaEntrada.minutes - horario.horaInicio.minutes
+                diferencia = item.horaEntrada.minute - horario.horaInicio.minute
                 cantidad = diferencia
              
         return cantidad
