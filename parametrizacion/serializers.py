@@ -141,7 +141,7 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
                 horaInicio = str(horario.horaInicio)
                 horaEntrada = str(item.horaEntrada)
                 diferencia = (datetime.datetime.strptime(horaInicio,"%H:%M") - datetime.datetime.strptime(horaEntrada,"%H:%M"))
-                cantidad = diferencia.days, diferencia.seconds//3600, (diferencia.seconds//60)%60
+                cantidad = diferencia.minutes
              
         return cantidad
     
