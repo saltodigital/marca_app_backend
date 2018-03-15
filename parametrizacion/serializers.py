@@ -49,7 +49,7 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     
     def _puntualidad(self,obj):
         horario = Horario.objects.filter(proyecto__empresa_id=obj.id).first()
-        asistencias = Asistencia.objects.filter(proyecto_empresa_id=obj.id)
+        asistencias = Asistencia.objects.filter(proyecto__empresa_id=obj.id)
         cantidad = 0
         if horario:
             for item in asistencias:
