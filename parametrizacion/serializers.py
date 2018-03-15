@@ -35,6 +35,7 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     municipio = MunicipioSerializer(read_only=True)
     proyectos = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
     usuarios = serializers.SerializerMethodField('_proyectoUsuarios',read_only=True)
+    puntualidad = serializers.SerializerMethodField('_puntualidad',read_only=True)
 	#logo = serializers.ImageField(required=False)
     def _contadorProyecto(self,obj):
         usuarios = Proyecto.objects.filter(empresa_id=obj.id)
@@ -45,12 +46,23 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
         usuarios = Proyecto.objects.filter(empresa_id=obj.id)
         cantidad = len(usuarios)
         return cantidad
+    
+    def _puntualidad(self,obj):
+        horario = Horario.objects.filter(proyecto__empresa_id=obj.id).first()
+        asistencias = Asistencia.objects.filter(proyecto_empresa_id=obj.id)
+        cantidad = 0
+        if horario:
+            for item in asistencias:
+                diferencia = item.horaEntrada.minute - horario.horaInicio.minute
+                cantidad = diferencia
+             
+        return cantidad
 
     class Meta:
         model = Empresa
         fields=('url','id','nombre','rut','direccion','correoElectronico',
         'telefono','telefonoFijo','municipio','municipio_id','field','usuarios','proyectos',
-        'numero','estado','fechaEstadoProyecto')
+        'numero','estado','fechaEstadoProyecto','puntualidad')
 
 #Api rest para Cargo
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
