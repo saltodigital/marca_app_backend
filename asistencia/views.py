@@ -19,7 +19,6 @@ from parametrizacion.serializers import (ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.decorators import api_view
 from datetime import date
 
 class AsistenciaViewSet(viewsets.ModelViewSet):
@@ -383,18 +382,31 @@ def listaDeNovedades(request):
     try:
         id_usuario = request.user.id
         ListPendientes = []
-        ListProyectos = ProyectoUsuario.objects.all()
+
+        today = date.today()
+        qset=(Q(entrada=today))
+        ListProyectos = Asistencia.objects.filter(qset)
 
         for item in ListProyectos:
+            if item.usuario.cargo:
+                cargo = item.usuario.cargo.nombre
+            else:
+                cargo = ""
+            
+            if item.usuario.persona:
+                usuario = item.usuario.persona.nombre + ' ' + item.usuario.persona.primerApellido
+            else:
+                usuario = ''
+            
             lista={
-                    "id": item.usuario.id,
+                    "id": item.id,
                     "gerencia":'Prueba',
-                    "supervisor": request.user.persona,
+                    "supervisor": "Janneison",
                     "proyecto": item.proyecto.nombre,
-                    "trabajador": item.usuario.persona,
-                    "cargo": item.cargo.nombre,
-                    "hora_ingreso": '9:00',
-                    "marca_ingreso":'19:00',
+                    "trabajador":usuario ,
+                    "cargo": cargo,
+                    "hora_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
+                    "marca_ingreso": item.horaEntrada.strftime("%H:%M:%S"),
                     "envia_aviso":'',
                     "llegada_estimada":'',
                     "envia_ausencia":"",

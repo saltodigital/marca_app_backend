@@ -36,7 +36,6 @@ router.register(r'estados', views.EstadoViewSet)
 router.register(r'tipos', views.TipoViewSet)
 router.register(r'personas', views.PersonaViewSet)
 router.register(r'proyectos', views.ProyectoViewSet)
-router.register(r'proyectoContactos', views.ProyectoContactoViewSet)
 router.register(r'proyectoUsuarios', views.ProyectoUsuarioViewSet)
 router.register(r'asistencias', AsistenciaViewSet)
 router.register(r'retrasos', RetrasoViewSet)
@@ -53,4 +52,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls)), 
     url(r'^api/proyectosAsignados/$', listaProyectos),
     url(r'^api/ultimasAsistencias/$', ultimasAsistencias),
+    url(r'^api/listaDeNovedades/$', listaDeNovedades),
+    url(r'^api/listaProyectos/$', views.listaProyectosConUsuarios),
 ]

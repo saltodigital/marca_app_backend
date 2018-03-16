@@ -12,11 +12,11 @@ from rest_framework import status
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, User, 
-Estado, Tipo, Persona, Proyecto,ContactoEmpresa,ContactoProyecto,ProyectoUsuario)
+Estado, Tipo, Persona, Proyecto,ContactoEmpresa,ProyectoUsuario)
 from marcaAPP.resource import MessageNC, ResponseNC
 from parametrizacion.serializers import (UserSerializer, GroupSerializer, PaisSerializer, TipoSerializer,
 RegionSerializer, MunicipioSerializer, EmpresaSerializer, CargoSerializer, EstadoSerializer, PersonaSerializer,
-ProyectoSerializer,EmpresaContactoSerializer,ProyectoContactoSerializer, ProyectoUsuarioSerializer)
+ProyectoSerializer,EmpresaContactoSerializer, ProyectoUsuarioSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -890,14 +890,22 @@ class ProyectoViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':				
             try:
                 serializer = ProyectoSerializer(data=request.data,context={'request': request})
+                qset = (Q(nombre=request.data['nombre'])&Q(empresa_id=request.data['empresa_id']))
+                proyecto = Proyecto.objects.filter(qset)
                 
+                if proyecto:
+                    return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+
                 if serializer.is_valid():
-                    serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
+                    serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],contacto_id=request.data['contacto_id'],
                     tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
                     return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
-            
+            except IntegrityError as ei:
+                return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
@@ -908,115 +916,20 @@ class ProyectoViewSet(viewsets.ModelViewSet):
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
                 serializer = ProyectoSerializer(instance,data=request.data,context={'request': request},partial=partial)
-				
+
                 if serializer.is_valid():
                     serializer.save(municipio_id=request.data['municipio_id'],empresa_id=request.data['empresa_id'],
-                    tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'])
+                    tipo_id=request.data['tipo_id'],estado_id=request.data['estado_id'],contacto_id=request.data['contacto_id'])
                     return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
                 else:
                     return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError as ei:
+                return Response({'message':'ya existe un proyecto con con el nombre ' + request.data['nombre'] + ' para la empresa escogida','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def destroy(self,request,*args,**kwargs):
-        try:
-            instance = self.get_object()
-            self.perform_destroy(instance)
-            return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProyectoContactoViewSet(viewsets.ModelViewSet):
-    """
-	API ENDPOINT de Proyecto contacto o la relación de un proyecto y sus contactos.
-    """
-    model=ContactoProyecto
-    queryset = model.objects.all()
-    serializer_class = ProyectoContactoSerializer
-    paginate_by = 20
-    nombre_modulo=''
-
-    def retrieve(self,request,*args, **kwargs):
-        '''
-        Devuelve un contacto
-        '''
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response({'message':'','success':'ok','data':serializer.data})
-        except Exception as e:
-            return Response({'message':'No se encontraron datos','success':'fail','data':''},status=status.HTTP_404_NOT_FOUND)
-    
-    def list(self, request, *args, **kwargs):
-        '''
-        Retorna una lista de contatos, se puede buscar por empresa o por rut. la variable sin_paginacion indica que no paginaremos el resultado
-        '''
-        try:
-            queryset = super(ProyectoContactoViewSet, self).get_queryset()
-            dato = self.request.query_params.get('dato', None)
-
-            sin_paginacion= self.request.query_params.get('sin_paginacion',None)
-
-            if (dato):
-                qset = (Q(persona__nombre__icontains=dato)|Q(persona__rut__icontains=dato))
-                queryset = self.model.objects.filter(qset)
-
-            page = self.paginate_queryset(queryset)
-
-            if sin_paginacion is None: 
-                if page is not None:
-                    serializer = self.get_serializer(page,many=True)	
-                    return self.get_paginated_response({'message':'','success':'ok','data':serializer.data})
-            
-                serializer = self.get_serializer(queryset,many=True)
-                return Response({'message':'','success':'ok','data':serializer.data})
-            else:
-                serializer = self.get_serializer(queryset,many=True)
-                return Response({'message':'','success':'ok','data':serializer.data})	
-        
-        except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    def create(self, request, *args, **kwargs):
-        '''
-        Crea un nuevo contacto, requiere proyecto_id y persona_id.
-        '''
-        if request.method == 'POST':				
-            try:
-                serializer = ProyectoContactoSerializer(data=request.data,context={'request': request})
-                
-                if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
-                    return Response({'message':'El registro ha sido guardado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
-                else:
-                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
-            
-            except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
-    
-    def update(self,request,*args,**kwargs):
-        '''
-        Actualiza contacto, Envia el contacto con sus cambios.
-        '''
-        if request.method == 'PUT':
-            try:
-                partial = kwargs.pop('partial', False)
-                instance = self.get_object()
-                serializer = ProyectoContactoSerializer(instance,data=request.data,context={'request': request},partial=partial)
-				
-                if serializer.is_valid():
-                    serializer.save(proyecto_id=request.data['proyecto_id'],persona_id=request.data['persona_id'])
-                    return Response({'message':'El registro ha sido actualizado exitosamente','success':'ok','data':serializer.data},status=status.HTTP_201_CREATED)
-                else:
-                    return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
-    
-    def destroy(self,request,*args,**kwargs):
-        '''
-        Elimina un contacto.
-        '''
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
@@ -1052,11 +965,12 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         try:
             queryset = super(ProyectoUsuarioViewSet, self).get_queryset()
             dato = self.request.query_params.get('dato', None)
-            dato = self.request.query_params.get('id_usuario', None)
+            id_usuario = self.request.query_params.get('id_usuario', None)
             sin_paginacion= self.request.query_params.get('sin_paginacion',None)
 
-            if (dato):
+            if (dato or id_usuario):
                 qset = (Q(persona__nombre__icontains=dato)|Q(user__username__icontains=dato))
+                
                 if id_usuario:
                     if dato:
                         qset=qset&(Q(usuario_id=id_usuario))
@@ -1078,7 +992,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                 return Response({'message':'','success':'ok','data':serializer.data})	
         
         except Exception as e:
-            return Response({'message':'Se presentaron errores de comunicacion con el servidor','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
         '''
@@ -1087,7 +1001,13 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':				
             try:
                 serializer = ProyectoUsuarioSerializer(data=request.data,context={'request': request})
+                qset = (Q(proyecto_id=request.data['proyecto_id'])&Q(usuario_id=request.data['usuario_id']))
+                proyectoUsu = ProyectoUsuario.objects.filter(qset)
                 
+                if proyectoUsu:
+                    return Response({'message':'El trabajador ya fue asignado a este proyecto','success':'fail',
+                    'data':''},status=status.HTTP_400_BAD_REQUEST)
+
                 if serializer.is_valid():
                     serializer.save(proyecto_id=request.data['proyecto_id'],usuario_id=request.data['usuario_id'],
                     cargo_id=request.data['cargo_id'])
@@ -1096,7 +1016,7 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
                     return Response({'message':serializer.errors,'success':'fail','data':''},status=status.HTTP_400_BAD_REQUEST)
             
             except Exception as e:
-                return Response({'message':'Se presentaron errores al procesar los datos' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Se presentaron errores al procesar los datos ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
     
     def update(self,request,*args,**kwargs):
         '''
@@ -1127,4 +1047,45 @@ class ProyectoUsuarioViewSet(viewsets.ModelViewSet):
             return Response({'message':'El registro se ha eliminado correctamente','success':'ok','data':''},status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({'message':'Se presentaron errores de comunicacion con el servidor ' + str(e),'success':'error','data':''},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def listaProyectosConUsuarios(request):
+    '''
+    Retorna una lista de proyectos del usuario
+    '''
+    try:
+        #id_usuario = request.user.id
+        ListPendientes = []
+        #qset=(Q(usuario_id=id_usuario))
+        ListProyectos = Proyecto.objects.all()
+        for item in ListProyectos:
+            qset=(Q(proyecto_id=item.id))
+            usuarios = ProyectoUsuario.objects.filter(qset)
+            cantidad = len(usuarios)
+            supervisor = ""
+            contacto = ""
+            if usuarios:
+                if usuarios[0].usuario.persona:
+                    supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
+
+            lista={
+                    "id": item.id,
+                    "nombre": item.nombre,
+                    "municipio": item.municipio.nombre,
+                    "descripcion": item.descripcion,
+                    "longitud": item.longitud,
+                    "latitud": item.longitud,
+                    "empresa": item.empresa.nombre,
+                    "idProyecto": item.idProyecto,
+                    "nombreCalle": item.nombreCalle,
+                    "ip":item.ip,
+                    "usuarios":cantidad,
+                    "supervisor":supervisor
+            }
+            ListPendientes.append(lista)
+
+        return Response({'message':'','success':'ok','data':ListPendientes})	
+        
+    except Exception as e:
+        return Response({'message':'Se presentaron errores de comunicacion con el servidor (' + str(e) + ')','status':'error','data':''},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

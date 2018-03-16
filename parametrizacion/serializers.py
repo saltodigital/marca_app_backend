@@ -1,9 +1,10 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
-User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto,ProyectoUsuario)
+User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ProyectoUsuario)
+from asistencia.models import (Horario, Asistencia, Retraso)
 from rest_framework.validators import UniqueValidator
-
+import datetime
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
@@ -32,12 +33,36 @@ class MunicipioSerializer(serializers.HyperlinkedModelSerializer):
 class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     municipio_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Municipio.objects.all())
     municipio = MunicipioSerializer(read_only=True)
+    proyectos = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
+    usuarios = serializers.SerializerMethodField('_proyectoUsuarios',read_only=True)
+    puntualidad = serializers.SerializerMethodField('_puntualidad',read_only=True)
 	#logo = serializers.ImageField(required=False)
+    def _contadorProyecto(self,obj):
+        usuarios = Proyecto.objects.filter(empresa_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+    
+    def _proyectoUsuarios(self,obj):
+        usuarios = Proyecto.objects.filter(empresa_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+    
+    def _puntualidad(self,obj):
+        horario = Horario.objects.filter(proyecto__empresa_id=obj.id).first()
+        asistencias = Asistencia.objects.filter(proyecto__empresa_id=obj.id)
+        cantidad = 0
+        if horario:
+            for item in asistencias:
+                diferencia = item.horaEntrada.minute - horario.horaInicio.minute
+                cantidad = diferencia
+             
+        return cantidad
+
     class Meta:
         model = Empresa
         fields=('url','id','nombre','rut','direccion','correoElectronico',
-        'telefono','telefonoFijo','municipio','municipio_id','field',
-        'numero','estado','fechaEstadoProyecto')
+        'telefono','telefonoFijo','municipio','municipio_id','field','usuarios','proyectos',
+        'numero','estado','fechaEstadoProyecto','puntualidad')
 
 #Api rest para Cargo
 class CargoSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,7 +78,8 @@ class PersonaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Persona
         fields=('url','id','nombre','primerApellido','segundoApellido','rut','genero','estadoCivil',
-        'correoElectronico','telefono','telefonoFijo','municipio','municipio_id','fechaNacimiento')
+        'correoElectronico','telefono','telefono2','telefonoFijo','municipio','municipio_id','fechaNacimiento',
+        'numero','nombreCalle','cargo','descripcionCargo','nacionalidad')
 
 class EmpresaContactoSerializer(serializers.HyperlinkedModelSerializer):
     persona=PersonaSerializer(read_only=True)
@@ -105,22 +131,44 @@ class ProyectoSerializer(serializers.HyperlinkedModelSerializer):
     #estado = EstadoSerializer(read_only=True)
     tipo_id = serializers.PrimaryKeyRelatedField(write_only=True,queryset=Tipo.objects.all())
     #tipo = EstadoSerializer(read_only=True)
+    usuarios = serializers.SerializerMethodField('_contadorProyecto',read_only=True)
+    supervisor = serializers.SerializerMethodField('_proyectoSupervisor',read_only=True)
+    puntualidad = serializers.SerializerMethodField('_puntualidad',read_only=True)
     empresa=EmpresaSerializer(read_only=True)
     empresa_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Empresa.objects.all())
+    contacto=PersonaSerializer(read_only=True)
+    contacto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
+
+    def _contadorProyecto(self,obj):
+        usuarios = ProyectoUsuario.objects.filter(proyecto_id=obj.id)
+        cantidad = len(usuarios)
+        return cantidad
+    
+    def _puntualidad(self,obj):
+        horario = Horario.objects.filter(proyecto_id=obj.id).first()
+        asistencias = Asistencia.objects.filter(proyecto_id=obj.id)
+        cantidad = 0
+        if horario:
+            for item in asistencias:
+                diferencia = item.horaEntrada.minute - horario.horaInicio.minute
+                cantidad = diferencia
+             
+        return cantidad
+    
+    def _proyectoSupervisor(self,obj):
+        usuarios = ProyectoUsuario.objects.filter(proyecto_id=obj.id)
+        supervisor = ""
+        if usuarios:
+            if usuarios[0].usuario.persona:
+                supervisor = usuarios[0].usuario.persona.nombre + " " + usuarios[0].usuario.persona.primerApellido
+
+        return supervisor
+
     class Meta:
         model = Proyecto
         fields=('url','id','nombre','descripcion','valorAdjudicado','latitud','longitud','fechaInicio',
         'fechaFin','municipio','municipio_id','empresa','empresa_id','estado_id','tipo_id',
-        'idProyecto','nombreCalle','numero','codigoPostal','ip')
-
-class ProyectoContactoSerializer(serializers.HyperlinkedModelSerializer):
-    persona=PersonaSerializer(read_only=True)
-    persona_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Persona.objects.all())
-    proyecto=ProyectoSerializer(read_only=True)
-    proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
-    class Meta:
-        model = ContactoProyecto
-        fields=('id','persona','persona_id','proyecto','proyecto_id','cargo')
+        'idProyecto','nombreCalle','numero','codigoPostal','ip','contacto','contacto_id','supervisor','usuarios','puntualidad')
 
 class ProyectoUsuarioSerializer(serializers.HyperlinkedModelSerializer):
     usuario=UserSerializer(read_only=True)

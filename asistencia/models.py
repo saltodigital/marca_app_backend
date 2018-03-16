@@ -8,13 +8,24 @@ from django.core.validators import RegexValidator
 import datetime
 
 class Horario(BaseModel):
+    jornadas = (
+        (1,u'Lunes'),
+        (2,u'Martes'),
+        (3,u'Miercoles'),
+        (4,u'Jueves'),
+        (5,u'Viernes'),
+        (6,u'Sabado'),
+        (7,u'Domingo')
+    )
     fechaInicio = 	models.DateField()
     fechaFin = models.DateField()
     horaInicio = 	models.TimeField()
     horaFin = models.TimeField()
-    primerDia = models.IntegerField()
-    ultimoDia = models.IntegerField()
+    primerDia = models.IntegerField(choices=jornadas,default=1)
+    ultimoDia = models.IntegerField(choices=jornadas,default=6)
+    jornada = models.CharField(default='1',max_length=52)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    cantidadHoras = models.IntegerField(default=24)
 
 class Asistencia(BasePermisoModel):
     entrada = models.DateField(auto_now_add = True)

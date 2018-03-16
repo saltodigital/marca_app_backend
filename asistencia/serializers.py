@@ -4,7 +4,7 @@ from asistencia.models import (Horario, Asistencia, Retraso)
 from parametrizacion.serializers import (UserSerializer, PersonaSerializer,
 ProyectoSerializer)
 from parametrizacion.models import (Pais, Region, Municipio, Empresa, Cargo, 
-User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto, ContactoProyecto,ProyectoUsuario)
+User, ContactoEmpresa, Persona, Estado, Tipo, Proyecto,ProyectoUsuario)
 
 class AsistenciaSerializer(serializers.HyperlinkedModelSerializer):
     usuario=UserSerializer(read_only=True)
@@ -27,6 +27,6 @@ class HorarioSerializer(serializers.HyperlinkedModelSerializer):
     proyecto_id=serializers.PrimaryKeyRelatedField(write_only=True,queryset=Proyecto.objects.all())
     class Meta:
         model = Horario
-        fields=('id','fechaInicio','fechaFin','proyecto','proyecto_id','horaInicio','horaFin','primerDia','ultimoDia')
+        fields=('id','nombre','fechaInicio','fechaFin','proyecto','proyecto_id','horaInicio','horaFin','primerDia','jornada','cantidadHoras','ultimoDia')
 
 
