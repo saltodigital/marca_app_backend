@@ -23,7 +23,7 @@ class Horario(BaseModel):
     horaFin = models.TimeField()
     primerDia = models.IntegerField(choices=jornadas,default=1)
     ultimoDia = models.IntegerField(choices=jornadas,default=6)
-    jornada = models.CharField(default='1',max_length=25)
+    jornada = models.CharField(default='1',max_length=52)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     cantidadHoras = models.IntegerField(default=24)
 
